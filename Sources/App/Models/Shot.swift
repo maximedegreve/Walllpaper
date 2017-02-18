@@ -10,6 +10,7 @@ import Vapor
 import HTTP
 import Fluent
 import FluentMySQL
+import Foundation
 
 final class Shot: Model {
     
@@ -40,7 +41,7 @@ final class Shot: Model {
     
     init(node: Node, in context: Context) throws {
         id = try node.extract("id")
-        user = try node.extract("user")
+        user = try node.extract("user_id")
         dribbbleId = try node.extract("dribbble_id")
         title = try node.extract("title")
         description = try node.extract("description")
@@ -55,7 +56,7 @@ final class Shot: Model {
     func makeNode(context: Context) throws -> Node {
         return try Node(node: [
             "id": id,
-            "user": user,
+            "user_id": user,
             "dribbble_id": dribbbleId,
             "title": title,
             "description": description,

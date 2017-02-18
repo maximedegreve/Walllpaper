@@ -1,51 +1,53 @@
 import Vapor
 import HTTP
 
-final class PostController: ResourceRepresentable {
+final class ShotController: ResourceRepresentable {
     func index(request: Request) throws -> ResponseRepresentable {
-        return try Post.all().makeNode().converted(to: JSON.self)
+        return try Shot.all().makeNode().converted(to: JSON.self)
     }
 
     func create(request: Request) throws -> ResponseRepresentable {
-        var post = try request.post()
-        try post.save()
+        var shot = try request.shot()
+        try shot.save()
+        return shot
+    }
+
+    func show(request: Request, post: Shot) throws -> ResponseRepresentable {
         return post
     }
 
-    func show(request: Request, post: Post) throws -> ResponseRepresentable {
-        return post
-    }
-
-    func delete(request: Request, post: Post) throws -> ResponseRepresentable {
+    func delete(request: Request, post: Shot) throws -> ResponseRepresentable {
         try post.delete()
         return JSON([:])
     }
 
     func clear(request: Request) throws -> ResponseRepresentable {
-        try Post.query().delete()
+        try Shot.query().delete()
         return JSON([])
     }
 
-    func update(request: Request, post: Post) throws -> ResponseRepresentable {
-        let new = try request.post()
+    /*
+    func update(request: Request, post: Shot) throws -> ResponseRepresentable {
+        let new = try request.shot()
         var post = post
         post.content = new.content
         try post.save()
         return post
     }
+ */
 
-    func replace(request: Request, post: Post) throws -> ResponseRepresentable {
+    func replace(request: Request, post: Shot) throws -> ResponseRepresentable {
         try post.delete()
         return try create(request: request)
     }
 
-    func makeResource() -> Resource<Post> {
+    func makeResource() -> Resource<Shot> {
         return Resource(
             index: index,
             store: create,
             show: show,
             replace: replace,
-            modify: update,
+            //modify: update,
             destroy: delete,
             clear: clear
         )
@@ -53,8 +55,8 @@ final class PostController: ResourceRepresentable {
 }
 
 extension Request {
-    func post() throws -> Post {
+    func shot() throws -> Shot {
         guard let json = json else { throw Abort.badRequest }
-        return try Post(node: json)
+        return try Shot(node: json)
     }
 }

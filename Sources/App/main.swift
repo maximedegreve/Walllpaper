@@ -6,7 +6,8 @@ let drop = Droplet()
 try drop.addProvider(VaporMySQL.Provider.self)
 drop.preparations.append(User.self)
 drop.preparations.append(Shot.self)
-
+drop.preparations.append(Category.self)
+drop.preparations.append(Like.self)
 
 drop.get { req in
     return try drop.view.make("welcome", [
@@ -14,6 +15,6 @@ drop.get { req in
     ])
 }
 
-drop.resource("posts", PostController())
+drop.resource("shots", ShotController())
 
 drop.run()
