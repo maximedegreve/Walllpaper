@@ -6,8 +6,11 @@
 //
 //
 
-import Vapor
 import Foundation
+import Vapor
+import FluentMySQL
+import HTTP
+import Fluent
 import TurnstileCrypto
 
 final class User: Model {
@@ -66,22 +69,25 @@ final class User: Model {
     }
     
     func makeNode(context: Context) throws -> Node {
-        return try Node(node: [
-            "id": id,
-            "access_token": accessToken,
-            "dribbble_id": dribbbleId,
-            "dribbble_username": dribbbleUsername,
-            "dribbble_url": dribbbleUrl,
-            "dribbble_access_token": dribbbleAccessToken,
-            "avatar_url": avatarUrl,
-            "location": location,
-            "website": website,
-            "twitter": twitter,
-            "followers_count": followersCount,
-            "following_count": followingCount,
-            "consented": consented,
-            "created_at": createdAt,
-            ])
+        
+        var dict: [String: Node] = [:]
+        dict["id"] = id
+        dict["access_token"] = accessToken.makeNode()
+        dict["dribbble_id"] = try dribbbleId.makeNode()
+        dict["dribbble_username"] = dribbbleUsername.makeNode()
+        dict["dribbble_url"] = dribbbleUrl.makeNode()
+        dict["dribbble_access_token"] = dribbbleAccessToken.makeNode()
+        dict["avatar_url"] = avatarUrl.makeNode()
+        dict["location"] = location.makeNode()
+        dict["website"] = website.makeNode()
+        dict["twitter"] = twitter.makeNode()
+        dict["followers_count"] = try followersCount.makeNode()
+        dict["following_count"] = try followingCount.makeNode()
+        dict["consented"] = consented.makeNode()
+        dict["created_at"] = createdAt.makeNode()
+        
+        return .object(dict)
+
     }
     
     static func prepare(_ database: Database) throws {
@@ -149,7 +155,7 @@ extension User: Auth.User {
             
         case let accessToken as DribbbleAccessToken:
             
-            let response = try Dribbble().getUserData(token: accessToken.string)
+            let response = try Dribbble.getUserData(token: accessToken.string)
             
             guard let dribbId = response.data["id"]?.int,
                 let dribbUsername = response.data["username"]?.string,
