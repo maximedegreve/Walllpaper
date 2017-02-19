@@ -8,12 +8,15 @@
 
 import Vapor
 import Foundation
+import TurnstileCrypto
 
 final class User: Model {
     var id: Node?
+    var accessToken: String
     var dribbbleId: Int
     var dribbbleUsername: String
     var dribbbleUrl: String
+    var dribbbleAccessToken: String
     var avatarUrl: String
     var location: String
     var website: String
@@ -26,14 +29,14 @@ final class User: Model {
     
     enum Error: Swift.Error {
         case userNotFound
-        case registerNotSupported
         case unsupportedCredentials
     }
     
-    init(dribbbleId: Int, dribbbleUsername: String, dribbbleUrl: String, avatarUrl: String, location: String, website: String, twitter: String, followersCount: Int, followingCount: Int, consented: Bool) {
+    init(dribbbleId: Int, dribbbleUsername: String, dribbbleUrl: String, dribbbleAccessToken: String, avatarUrl: String, location: String, website: String, twitter: String, followersCount: Int, followingCount: Int, consented: Bool) {
         self.dribbbleId = dribbbleId
         self.dribbbleUsername = dribbbleUsername
         self.dribbbleUrl = dribbbleUrl
+        self.dribbbleAccessToken = dribbbleAccessToken
         self.avatarUrl = avatarUrl
         self.location = location
         self.website = website
@@ -42,13 +45,16 @@ final class User: Model {
         self.followingCount = followingCount
         self.consented = consented
         self.createdAt = Date().mysql
+        self.accessToken = URandom.secureToken
     }
     
     init(node: Node, in context: Context) throws {
         self.id = nil
+        self.accessToken = try node.extract("access_token")
         self.dribbbleId = try node.extract("dribbble_id")
         self.dribbbleUsername = try node.extract("dribbble_username")
         self.dribbbleUrl = try node.extract("dribbble_url")
+        self.dribbbleAccessToken = try node.extract("dribbble_access_token")
         self.avatarUrl = try node.extract("avatar_url")
         self.location = try node.extract("location")
         self.website = try node.extract("website")
@@ -62,9 +68,11 @@ final class User: Model {
     func makeNode(context: Context) throws -> Node {
         return try Node(node: [
             "id": id,
+            "access_token": accessToken,
             "dribbble_id": dribbbleId,
             "dribbble_username": dribbbleUsername,
             "dribbble_url": dribbbleUrl,
+            "dribbble_access_token": dribbbleAccessToken,
             "avatar_url": avatarUrl,
             "location": location,
             "website": website,
@@ -80,9 +88,11 @@ final class User: Model {
         
         try database.create("users") { user in
             user.id()
+            user.string("access_token", length: 250, optional: false, unique: false)
             user.int("dribbble_id", optional: false, unique: true, default: 0)
             user.string("dribbble_username", length: 250, optional: false, unique: true)
             user.string("dribbble_url", length: 250, optional: false, unique:true)
+            user.string("dribbble_access_token", length: 250, optional: false, unique:true)
             user.string("avatar_url", length: 250, optional: false, unique: false)
             user.string("location", length: 250, optional: false, unique: false)
             user.string("website", length: 250, optional: true, unique: false)
@@ -103,20 +113,28 @@ final class User: Model {
 import Auth
 
 extension User: Auth.User {
+    
     static func authenticate(credentials: Credentials) throws -> Auth.User {
+        
         let user: User?
         
         switch credentials {
-        case let id as Identifier:
-            user = try User.find(id.id)
+            
         case let accessToken as AccessToken:
+            
+            let response = try Dribbble().getUserData(token: accessToken.string)
+            guard let dribbId = response.data["id"]?.int else {
+                throw Abort.custom(status: .badRequest, message: "Something went wrong.")
+            }
+                
+            user = try User.query().filter("dribbble_id", dribbId).first()
+
+            
             user = try User.query().filter("access_token", accessToken.string).first()
-        case let apiKey as APIKey:
-            user = try User.query().filter("email", apiKey.id).filter("password", apiKey.secret).first()
         default:
             throw Abort.custom(status: .badRequest, message: "Invalid credentials.")
         }
-        
+
         guard let u = user else {
             throw Abort.custom(status: .badRequest, message: "User not found")
         }
@@ -126,7 +144,35 @@ extension User: Auth.User {
     
     
     static func register(credentials: Credentials) throws -> Auth.User {
-        throw Abort.custom(status: .badRequest, message: "Register not supported.")
+        
+        switch credentials {
+            
+        case let accessToken as AccessToken:
+            
+            let response = try Dribbble().getUserData(token: accessToken.string)
+            
+            guard let dribbId = response.data["id"]?.int,
+                let dribbUsername = response.data["username"]?.string,
+                let dribbUrl = response.data["html_url"]?.string,
+                let avatarUrl = response.data["avatar_url"]?.string,
+                let location = response.data["location"]?.string,
+                let website = response.data["links"]?.object?["web"]?.string,
+                let twitter = response.data["links"]?.object?["twitter"]?.string,
+                let followersCount = response.data["followers_count"]?.int,
+                let followingCount = response.data["followings_count"]?.int else {
+                    throw Abort.badRequest
+            }
+            
+            var newUser = User(dribbbleId: dribbId, dribbbleUsername: dribbUsername, dribbbleUrl: dribbUrl, dribbbleAccessToken: accessToken.string, avatarUrl: avatarUrl, location: location, website: website, twitter: twitter, followersCount: followersCount, followingCount: followingCount, consented: false)
+            try newUser.save()
+            
+            return newUser
+            
+        default:
+            let type = type(of: credentials)
+            throw Abort.custom(status: .forbidden, message: "Unsupported credential type: \(type).")
+        }
+
     }
 }
 
