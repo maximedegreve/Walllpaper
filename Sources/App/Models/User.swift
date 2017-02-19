@@ -122,7 +122,7 @@ extension User: Auth.User {
             
         case let accessToken as AccessToken:
             
-            let response = try Dribbble().getUserData(token: accessToken.string)
+            let response = try Dribbble.getUserData(token: accessToken.string)
             guard let dribbId = response.data["id"]?.int else {
                 throw Abort.custom(status: .badRequest, message: "Something went wrong.")
             }

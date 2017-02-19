@@ -23,14 +23,14 @@ public class DribbbleAccessToken: Credentials {
 
 final class Dribbble {
     
-    let client_id = drop.config["dribbble", "client_id"]?.string ?? ""
-    let client_secret = drop.config["dribbble", "client_secret"]?.string ?? ""
-    let tokenURL = "https://dribbble.com/oauth/token"
-    let apiURL = "https://api.dribbble.com/v1/"
+    static let client_id = drop.config["dribbble", "client_id"]?.string ?? ""
+    static let client_secret = drop.config["dribbble", "client_secret"]?.string ?? ""
+    static let tokenURL = "https://dribbble.com/oauth/token"
+    static let apiURL = "https://api.dribbble.com/v1/"
     
-    func getToken(code: String) throws -> String?{
+    static func getToken(code: String) throws -> String?{
         
-        let result = try drop.client.post(tokenURL, query: ["client_id": client_id, "client_secret": client_secret, "code": code])
+        let result = try drop.client.post(self.tokenURL, query: ["client_id": self.client_id, "client_secret": self.client_secret, "code": code])
         
         guard let token = result.data["access_token"]?.string else {
             return nil
@@ -40,9 +40,9 @@ final class Dribbble {
         
     }
     
-    func getUserData(token: String) throws -> Response{
+    static func getUserData(token: String) throws -> Response{
         
-        return try drop.client.get("\(apiURL)user?access_token=\(token)");
+        return try drop.client.get("\(self.apiURL)user?access_token=\(token)");
         
     }
     

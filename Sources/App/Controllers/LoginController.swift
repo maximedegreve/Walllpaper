@@ -25,7 +25,7 @@ final class LoginController {
                 throw Abort.badRequest
         }
         
-        guard let accessToken = try Dribbble().getToken(code: code) else {
+        guard let accessToken = try Dribbble.getToken(code: code) else {
             throw Abort.badRequest
         }
         
