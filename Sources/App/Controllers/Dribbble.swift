@@ -8,6 +8,18 @@
 
 import Vapor
 import HTTP
+import Turnstile
+
+public class DribbbleAccessToken: Credentials {
+    /// The token as a String
+    public let string: Token
+    
+    /// Initializer for TokenCredentials
+    public init(string: Token) {
+        /// User-presentable error message
+        self.string = string
+    }
+}
 
 final class Dribbble {
     

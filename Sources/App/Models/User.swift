@@ -45,7 +45,7 @@ final class User: Model {
         self.followingCount = followingCount
         self.consented = consented
         self.createdAt = Date().mysql
-        self.accessToken = URandom.secureToken
+        self.accessToken = TurnstileCrypto.URandom().secureToken
     }
     
     init(node: Node, in context: Context) throws {
@@ -88,7 +88,7 @@ final class User: Model {
         
         try database.create("users") { user in
             user.id()
-            user.string("access_token", length: 250, optional: false, unique: false)
+            user.string("access_token", length: 250, optional: true, unique: false)
             user.int("dribbble_id", optional: false, unique: true, default: 0)
             user.string("dribbble_username", length: 250, optional: false, unique: true)
             user.string("dribbble_url", length: 250, optional: false, unique:true)
@@ -116,7 +116,7 @@ extension User: Auth.User {
     
     static func authenticate(credentials: Credentials) throws -> Auth.User {
         
-        let user: User?
+        var user: User?
         
         switch credentials {
             
@@ -147,7 +147,7 @@ extension User: Auth.User {
         
         switch credentials {
             
-        case let accessToken as AccessToken:
+        case let accessToken as DribbbleAccessToken:
             
             let response = try Dribbble().getUserData(token: accessToken.string)
             
