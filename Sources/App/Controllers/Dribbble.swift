@@ -11,14 +11,13 @@ import HTTP
 import Turnstile
 
 public class DribbbleAccessToken: Credentials {
-    /// The token as a String
+    
     public let string: Token
     
-    /// Initializer for TokenCredentials
     public init(string: Token) {
-        /// User-presentable error message
         self.string = string
     }
+    
 }
 
 final class Dribbble {
@@ -40,9 +39,39 @@ final class Dribbble {
         
     }
     
-    static func getUserData(token: String) throws -> Response{
+    static func user(token: String) throws -> Response{
         
         return try drop.client.get("\(self.apiURL)user?access_token=\(token)");
+        
+    }
+    
+    static func followUser(token: String, id: Int) throws -> Response{
+        
+        return try drop.client.put("\(self.apiURL)users/\(id)/follow?access_token=\(token)")
+        
+    }
+    
+    static func isFollowingUser(token: String, id: Int) throws -> Response{
+        
+        return try drop.client.get("\(self.apiURL)user/following/\(id)?access_token=\(token)")
+        
+    }
+    
+    static func likeShot(token: String, id: Int) throws -> Response{
+        
+        return try drop.client.post("\(self.apiURL)shots/\(id)/like?access_token=\(token)")
+        
+    }
+    
+    static func unlikeShot(token: String, id: Int) throws -> Response{
+        
+        return try drop.client.delete("\(self.apiURL)shots/\(id)/like?access_token=\(token)")
+        
+    }
+    
+    static func shot(token: String, id: Int) throws -> Response{
+        
+        return try drop.client.get("\(self.apiURL)shots/\(id)?access_token=\(token)")
         
     }
     

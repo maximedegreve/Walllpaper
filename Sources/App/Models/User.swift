@@ -132,7 +132,7 @@ extension User: Auth.User {
             
         case let accessToken as DribbbleAccessToken:
             
-            let response = try Dribbble.getUserData(token: accessToken.string)
+            let response = try Dribbble.user(token: accessToken.string)
             
             guard let dribbId = response.data["id"]?.int else {
                 throw Abort.custom(status: .badRequest, message: "Something went wrong.")
@@ -142,9 +142,7 @@ extension User: Auth.User {
             
             // else create account
             if user == nil{
-                
                 user = try User.register(credentials: accessToken) as? User
-                
             }
             
         case let accessToken as AccessToken:
@@ -169,7 +167,7 @@ extension User: Auth.User {
             
         case let accessToken as DribbbleAccessToken:
             
-            let response = try Dribbble.getUserData(token: accessToken.string)
+            let response = try Dribbble.user(token: accessToken.string)
             
             guard let dribbId = response.data["id"]?.int,
                 let dribbUsername = response.data["username"]?.string,

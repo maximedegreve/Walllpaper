@@ -13,14 +13,14 @@ drop.preparations.append(Like.self)
 let auth = AuthMiddleware(user: User.self)
 drop.middleware.append(auth)
 
+drop.group(auth) { authorized in
+    //authorized.get("access_token") { request in
+        // has been authorized
+    //}
+}
+
 let login = LoginController()
 login.addRoutes(to: drop)
-
-drop.get { req in
-    return try drop.view.make("welcome", [
-    	"message": drop.localization[req.lang, "welcome", "title"]
-    ])
-}
 
 drop.resource("shots", ShotController())
 
