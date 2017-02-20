@@ -9,6 +9,7 @@
 import Vapor
 import HTTP
 import Turnstile
+import Auth
 
 final class LoginController {
     
@@ -30,7 +31,7 @@ final class LoginController {
         
         let token = DribbbleAccessToken(string: accessToken)
         let user = try User.authenticate(credentials: token)
-        
+
         return user as! ResponseRepresentable
         
     }

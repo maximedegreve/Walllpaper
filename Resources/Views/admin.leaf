@@ -1,0 +1,11 @@
+#extend("admin-base")
+
+#export("head") {
+	<title>Admin</title>
+}
+
+#export("body") {
+    <div class="message">
+        <h1>#(message)</h1>
+    </div>
+}

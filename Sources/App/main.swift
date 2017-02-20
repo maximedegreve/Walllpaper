@@ -13,14 +13,11 @@ drop.preparations.append(Like.self)
 let auth = AuthMiddleware(user: User.self)
 drop.middleware.append(auth)
 
-drop.group(auth) { authorized in
-    //authorized.get("access_token") { request in
-        // has been authorized
-    //}
-}
-
 let login = LoginController()
 login.addRoutes(to: drop)
+
+let admin = AdminController()
+admin.addRoutes(to: drop)
 
 drop.resource("shots", ShotController())
 

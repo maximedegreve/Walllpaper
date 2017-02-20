@@ -156,7 +156,7 @@ extension User: Auth.User {
         guard let u = user else {
             throw Abort.custom(status: .badRequest, message: "User not found")
         }
-        
+                
         return u
     }
     
@@ -197,6 +197,7 @@ extension User: Auth.User {
 import HTTP
 
 extension Request {
+    
     func user() throws -> User {
         guard let user = try auth.user() as? User else {
             throw Abort.custom(status: .badRequest, message: "Invalid user type.")
@@ -204,4 +205,5 @@ extension Request {
         
         return user
     }
+    
 }
