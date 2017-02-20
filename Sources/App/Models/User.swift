@@ -28,6 +28,7 @@ final class User: Model {
     var followingCount: Int
     var consented: Bool = false
     var createdAt: String
+    var admin: Bool = false
     var exists: Bool = false
     
     enum Error: Swift.Error {
@@ -66,6 +67,7 @@ final class User: Model {
         self.followingCount = try node.extract("following_count")
         self.consented = try node.extract("consented")
         self.createdAt = try node.extract("created_at")
+        self.admin = try node.extract("admin")
     }
     
     func makeNode(context: Context) throws -> Node {
@@ -85,6 +87,7 @@ final class User: Model {
         dict["following_count"] = try followingCount.makeNode()
         dict["consented"] = consented.makeNode()
         dict["created_at"] = createdAt.makeNode()
+        dict["admin"] = admin.makeNode()
         
         return .object(dict)
 
@@ -107,6 +110,7 @@ final class User: Model {
             user.int("following_count", optional: false, unique: false, default: 0)
             user.int("consented", optional: false, unique: false, default: 0)
             user.string("created_at", length: 250, optional: false, unique: false)
+            user.int("admin", optional: false, unique: false, default: 0)
         }
         
     }
@@ -126,17 +130,27 @@ extension User: Auth.User {
         
         switch credentials {
             
-        case let accessToken as AccessToken:
+        case let accessToken as DribbbleAccessToken:
             
             let response = try Dribbble.getUserData(token: accessToken.string)
+            
             guard let dribbId = response.data["id"]?.int else {
                 throw Abort.custom(status: .badRequest, message: "Something went wrong.")
             }
-                
+            
             user = try User.query().filter("dribbble_id", dribbId).first()
-
+            
+            // else create account
+            if user == nil{
+                
+                user = try User.register(credentials: accessToken) as? User
+                
+            }
+            
+        case let accessToken as AccessToken:
             
             user = try User.query().filter("access_token", accessToken.string).first()
+            
         default:
             throw Abort.custom(status: .badRequest, message: "Invalid credentials.")
         }
