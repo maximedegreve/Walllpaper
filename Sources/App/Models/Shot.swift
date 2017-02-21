@@ -25,6 +25,7 @@ final class Shot: Model {
     var viewsCount: Int
     var likesCount: Int
     var createdAt: String
+    var exists: Bool = false
     
     init(user: Node, dribbbleId: Int, title: String, description: String, imageRetina: String, image: String, imageOverriden: Bool, viewsCount: Int, likesCount: Int) {
         self.user = user
@@ -137,7 +138,7 @@ final class Shot: Model {
             let imageNormal = data["images"]?.object?["normal"]?.string,
             let viewsCount = data["views_count"]?.int,
             let likesCount = data["likes_count"]?.int,
-            let userNode = try user?.makeNode() else {
+            let userNode = user?.id else {
                 throw Abort.badRequest
         }
         

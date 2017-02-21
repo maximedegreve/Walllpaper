@@ -55,7 +55,7 @@ final class AdminController {
         
         return try drop.view.make("admin", [
             "shots": try getShots().makeNode(),
-            "message": "puta madre"
+            "message": "nonna"
             ])
     }
     
