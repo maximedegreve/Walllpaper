@@ -6,10 +6,8 @@
 
 #export("body") {
 
-#loop(shots, "shot") {
-<img src="#(shot.image_retina)"/>
-
-}
-
+    #loop(shots, "shot") {
+        <img src="#(shot.image_retina)"/>
+    }
 
 }
