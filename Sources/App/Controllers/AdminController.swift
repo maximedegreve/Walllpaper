@@ -10,6 +10,7 @@ import Vapor
 import HTTP
 import Turnstile
 import Auth
+import Fluent
 
 final class AdminController {
     
@@ -20,9 +21,14 @@ final class AdminController {
     }
     
     func index(_ request: Request) throws -> ResponseRepresentable {
-        
-        Swift.print(user)
-        return try drop.view.make("admin")
+                    
+        let shotsQuery = try Shot.query()
+        shotsQuery.limit = Limit(count: 42, offset: 0)
+        let shots = try shotsQuery.sort("created_at", .descending).all()
+            
+        return try drop.view.make("admin", [
+                "shots": shots.makeNode(),
+                ])
         
     }
     

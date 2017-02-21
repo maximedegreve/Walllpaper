@@ -5,7 +5,11 @@
 }
 
 #export("body") {
-    <div class="message">
-        <h1>#(message)</h1>
-    </div>
+
+#loop(shots, "shot") {
+<img src="#(shot.image_retina)"/>
+
+}
+
+
 }
