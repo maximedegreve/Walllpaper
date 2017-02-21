@@ -97,14 +97,53 @@ final class Shot: Model {
             shot.parent(User.self, optional: false, unique: false)
             shot.int("dribbble_id", optional: false, unique: true, default: 0)
             shot.string("title", length: 250, optional: false, unique: false)
-            shot.string("description", length: 250, optional: false, unique: false)
+            shot.text("description", optional: true, unique: false, default: nil)
             shot.string("image_retina", length: 250, optional: false, unique: false)
             shot.string("image", length: 250, optional: false, unique: false)
             shot.int("image_overriden", optional: false, unique: false, default: 0)
             shot.int("views_count", optional: false, unique: false, default: 0)
             shot.int("likes_count", optional: false, unique: false, default: 0)
-            shot.string("created_at", length: 250, optional: false, unique: false)
+            shot.date("created_at")
         }
+        
+    }
+    
+    static func dribbbleData(data:[String: Polymorphic]) throws -> Shot{
+        
+        var user: User?
+
+        guard let userId = data["user"]?.object?["id"]?.int else {
+            throw Abort.badRequest
+        }
+        
+        user = try User.findWith(dribbbleId: userId)
+        
+        if user == nil{
+            
+            guard let userData = data["user"]?.object else {
+                throw Abort.badRequest
+            }
+            var newUser = try User.dribbbleData(data: userData)
+            try newUser.save()
+            
+            user = newUser
+            
+        }
+        
+        guard let id = data["id"]?.int,
+            let title = data["title"]?.string,
+            let description = data["description"]?.string,
+            let imageHiDPI = data["images"]?.object?["hidpi"]?.string,
+            let imageNormal = data["images"]?.object?["normal"]?.string,
+            let viewsCount = data["views_count"]?.int,
+            let likesCount = data["likes_count"]?.int,
+            let userNode = try user?.makeNode() else {
+                throw Abort.badRequest
+        }
+        
+        let shot = Shot(user: userNode, dribbbleId: id, title: title, description: description, imageRetina: imageHiDPI, image: imageNormal, imageOverriden: false, viewsCount: viewsCount, likesCount: likesCount)
+        
+        return shot
         
     }
     

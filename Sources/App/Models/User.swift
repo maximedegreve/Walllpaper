@@ -19,7 +19,7 @@ final class User: Model {
     var dribbbleId: Int
     var dribbbleUsername: String
     var dribbbleUrl: String
-    var dribbbleAccessToken: String
+    var dribbbleAccessToken: String?
     var avatarUrl: String
     var location: String
     var website: String
@@ -36,11 +36,10 @@ final class User: Model {
         case unsupportedCredentials
     }
     
-    init(dribbbleId: Int, dribbbleUsername: String, dribbbleUrl: String, dribbbleAccessToken: String, avatarUrl: String, location: String, website: String, twitter: String, followersCount: Int, followingCount: Int, consented: Bool) {
+    init(dribbbleId: Int, dribbbleUsername: String, dribbbleUrl: String, avatarUrl: String, location: String, website: String, twitter: String, followersCount: Int, followingCount: Int, consented: Bool) {
         self.dribbbleId = dribbbleId
         self.dribbbleUsername = dribbbleUsername
         self.dribbbleUrl = dribbbleUrl
-        self.dribbbleAccessToken = dribbbleAccessToken
         self.avatarUrl = avatarUrl
         self.location = location
         self.website = website
@@ -78,7 +77,7 @@ final class User: Model {
         dict["dribbble_id"] = try dribbbleId.makeNode()
         dict["dribbble_username"] = dribbbleUsername.makeNode()
         dict["dribbble_url"] = dribbbleUrl.makeNode()
-        dict["dribbble_access_token"] = dribbbleAccessToken.makeNode()
+        dict["dribbble_access_token"] = dribbbleAccessToken?.makeNode()
         dict["avatar_url"] = avatarUrl.makeNode()
         dict["location"] = location.makeNode()
         dict["website"] = website.makeNode()
@@ -101,7 +100,7 @@ final class User: Model {
             user.int("dribbble_id", optional: false, unique: true, default: 0)
             user.string("dribbble_username", length: 250, optional: false, unique: true)
             user.string("dribbble_url", length: 250, optional: false, unique:true)
-            user.string("dribbble_access_token", length: 250, optional: false, unique:true)
+            user.string("dribbble_access_token", length: 250, optional: true, unique:true)
             user.string("avatar_url", length: 250, optional: false, unique: false)
             user.string("location", length: 250, optional: false, unique: false)
             user.string("website", length: 250, optional: true, unique: false)
@@ -109,7 +108,7 @@ final class User: Model {
             user.int("followers_count", optional: false, unique: false, default: 0)
             user.int("following_count", optional: false, unique: false, default: 0)
             user.int("consented", optional: false, unique: false, default: 0)
-            user.string("created_at", length: 250, optional: false, unique: false)
+            user.date("created_at")
             user.int("admin", optional: false, unique: false, default: 0)
         }
         
@@ -118,6 +117,33 @@ final class User: Model {
     static func revert(_ database: Database) throws {
         try database.delete("users")
     }
+    
+    static func findWith(dribbbleId: Int) throws -> User?{
+        return try User.query().filter("dribbble_id", dribbbleId).all().first
+    }
+    
+    static func dribbbleData(data:[String: Polymorphic]) throws -> User{
+        
+        guard let dribbId = data["id"]?.int,
+            let dribbUsername = data["username"]?.string,
+            let dribbUrl = data["html_url"]?.string,
+            let avatarUrl = data["avatar_url"]?.string,
+            let location = data["location"]?.string,
+            let website = data["links"]?.object?["web"]?.string,
+            let twitter = data["links"]?.object?["twitter"]?.string,
+            let followersCount = data["followers_count"]?.int,
+            let followingCount = data["followings_count"]?.int else {
+                throw Abort.badRequest
+        }
+        
+        let newUser = User(dribbbleId: dribbId, dribbbleUsername: dribbUsername, dribbbleUrl: dribbUrl, avatarUrl: avatarUrl, location: location, website: website, twitter: twitter, followersCount: followersCount, followingCount: followingCount, consented: false)
+        
+        return newUser
+        
+    }
+    
+    
+    
 }
 
 import Auth
@@ -125,6 +151,7 @@ import Auth
 extension User: Auth.User {
     
     static func authenticate(credentials: Credentials) throws -> Auth.User {
+        
         
         var user: User?
         
@@ -140,10 +167,14 @@ extension User: Auth.User {
             
             user = try User.query().filter("dribbble_id", dribbId).first()
             
-            // else create account
+            // Else create account
             if user == nil{
                 user = try User.register(credentials: accessToken) as? User
             }
+            
+            // Update Dribbble token
+            user?.dribbbleAccessToken = accessToken.string
+            try user?.save()
             
         case let accessToken as AccessToken:
             
@@ -167,23 +198,13 @@ extension User: Auth.User {
             
         case let accessToken as DribbbleAccessToken:
             
-            let response = try Dribbble.user(token: accessToken.string)
-            
-            guard let dribbId = response.data["id"]?.int,
-                let dribbUsername = response.data["username"]?.string,
-                let dribbUrl = response.data["html_url"]?.string,
-                let avatarUrl = response.data["avatar_url"]?.string,
-                let location = response.data["location"]?.string,
-                let website = response.data["links"]?.object?["web"]?.string,
-                let twitter = response.data["links"]?.object?["twitter"]?.string,
-                let followersCount = response.data["followers_count"]?.int,
-                let followingCount = response.data["followings_count"]?.int else {
-                    throw Abort.badRequest
+            guard let response = try Dribbble.user(token: accessToken.string).json?.object else {
+                throw Abort.badRequest
             }
             
-            var newUser = User(dribbbleId: dribbId, dribbbleUsername: dribbUsername, dribbbleUrl: dribbUrl, dribbbleAccessToken: accessToken.string, avatarUrl: avatarUrl, location: location, website: website, twitter: twitter, followersCount: followersCount, followingCount: followingCount, consented: false)
+            var newUser = try User.dribbbleData(data: response)
             try newUser.save()
-            
+
             return newUser
             
         default:

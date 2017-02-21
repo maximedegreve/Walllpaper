@@ -24,6 +24,7 @@ final class Dribbble {
     
     static let client_id = drop.config["dribbble", "client_id"]?.string ?? ""
     static let client_secret = drop.config["dribbble", "client_secret"]?.string ?? ""
+    static let access_token = drop.config["dribbble", "access_token"]?.string ?? ""
     static let tokenURL = "https://dribbble.com/oauth/token"
     static let apiURL = "https://api.dribbble.com/v1/"
     

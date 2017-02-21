@@ -6,6 +6,16 @@
 
 #export("body") {
 
+    <div class="row">
+    <form class="form-inline" action="/admin" method="POST">
+        <div class="form-group">
+            <label for="id">Dribbble Id</label>
+            <input type="text" name="shot-id"><br>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+</div>
     #loop(shots, "shot") {
         <img src="#(shot.image_retina)"/>
     }
