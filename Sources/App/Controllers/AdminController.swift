@@ -18,6 +18,7 @@ final class AdminController {
 
         drop.get("admin", handler: index)
         drop.post("admin", handler: post)
+        drop.get("admin/creators", handler: creators)
         
     }
     
@@ -30,10 +31,17 @@ final class AdminController {
         
     }
     
+    func getCategories() throws -> [Category]{
+        
+        return try Category.query().all()
+        
+    }
+    
     func index(_ request: Request) throws -> ResponseRepresentable {
 
         return try drop.view.make("admin", [
                 "shots": try getShots().makeNode(),
+                "categories": try getCategories().makeNode(),
                 ])
         
     }
@@ -55,8 +63,18 @@ final class AdminController {
         
         return try drop.view.make("admin", [
             "shots": try getShots().makeNode(),
-            "message": "nonna"
+            "categories": try getCategories().makeNode(),
             ])
+    }
+    
+    func creators(_ request: Request) throws -> ResponseRepresentable {
+        
+        let users = try User.query().sort("created_at", .descending).all().makeNode()
+        
+        return try drop.view.make("admin-creator", [
+            "users": users,
+            ])
+        
     }
     
 }

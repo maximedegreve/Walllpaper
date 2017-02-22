@@ -18,6 +18,7 @@ final class User: Model {
     var accessToken: String
     var dribbbleId: Int
     var dribbbleUsername: String
+    var name: String
     var dribbbleUrl: String
     var dribbbleAccessToken: String?
     var avatarUrl: String?
@@ -36,8 +37,9 @@ final class User: Model {
         case unsupportedCredentials
     }
     
-    init(dribbbleId: Int, dribbbleUsername: String, dribbbleUrl: String, avatarUrl: String?, location: String?, website: String?, twitter: String?, followersCount: Int, followingCount: Int, consented: Bool) {
+    init(name: String, dribbbleId: Int, dribbbleUsername: String, dribbbleUrl: String, avatarUrl: String?, location: String?, website: String?, twitter: String?, followersCount: Int, followingCount: Int, consented: Bool) {
         self.dribbbleId = dribbbleId
+        self.name = name
         self.dribbbleUsername = dribbbleUsername
         self.dribbbleUrl = dribbbleUrl
         self.avatarUrl = avatarUrl
@@ -53,6 +55,7 @@ final class User: Model {
     
     init(node: Node, in context: Context) throws {
         self.id = nil
+        self.name = try node.extract("name")
         self.accessToken = try node.extract("access_token")
         self.dribbbleId = try node.extract("dribbble_id")
         self.dribbbleUsername = try node.extract("dribbble_username")
@@ -73,6 +76,7 @@ final class User: Model {
         
         var dict: [String: Node] = [:]
         dict["id"] = id
+        dict["name"] = name.makeNode()
         dict["access_token"] = accessToken.makeNode()
         dict["dribbble_id"] = try dribbbleId.makeNode()
         dict["dribbble_username"] = dribbbleUsername.makeNode()
@@ -96,6 +100,7 @@ final class User: Model {
         
         try database.create("users") { user in
             user.id()
+            user.string("name", length: 250, optional: false, unique: false)
             user.string("access_token", length: 250, optional: true, unique: false)
             user.int("dribbble_id", optional: false, unique: true, default: 0)
             user.string("dribbble_username", length: 250, optional: false, unique: true)
@@ -126,6 +131,7 @@ final class User: Model {
         
         guard let dribbId = data["id"]?.int,
             let dribbUsername = data["username"]?.string,
+            let name = data["name"]?.string,
             let dribbUrl = data["html_url"]?.string,
             let followersCount = data["followers_count"]?.int,
             let followingCount = data["followings_count"]?.int else {
@@ -137,7 +143,7 @@ final class User: Model {
         let website = data["links"]?.object?["web"]?.string
         let twitter = data["links"]?.object?["twitter"]?.string
         
-        let newUser = User(dribbbleId: dribbId, dribbbleUsername: dribbUsername, dribbbleUrl: dribbUrl, avatarUrl: avatarUrl, location: location, website: website, twitter: twitter, followersCount: followersCount, followingCount: followingCount, consented: false)
+        let newUser = User(name: name, dribbbleId: dribbId, dribbbleUsername: dribbUsername, dribbbleUrl: dribbUrl, avatarUrl: avatarUrl, location: location, website: website, twitter: twitter, followersCount: followersCount, followingCount: followingCount, consented: false)
         
         return newUser
         

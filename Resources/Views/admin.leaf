@@ -21,6 +21,13 @@
         <div data-idShot=#(shot.id)" class="col-md-2" style="height: auto; margin-bottom: 40px;">
             <img style='display: block;' height='auto' width='100%' src="#(shot.image_retina)"/>
             <h5>#(shot.title)</h5>
+
+            #loop(categories, "category") {
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="check_list[]" value="#(category.id)">#(category.name)
+                </label><br>
+            }
+
             <!-- Single button -->
             <div class="btn-group" style="width: 100%; margin-top: 10px;">
                 <button type="button" style="width: 100%;" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">

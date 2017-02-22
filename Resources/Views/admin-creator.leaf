@@ -1,0 +1,46 @@
+#extend("admin-base")
+
+#export("head") {
+	<title>Admin</title>
+}
+
+#export("body") {
+
+<div class="row">
+
+    <h1>Users</h1>
+
+    <div class="table-responsive">
+
+        <table class="table table-striped">
+
+        <thead><tr>
+        <th>Name</th>
+        <th>Website</th>
+        <th>Twitter</th>
+        <th>Followers</th>
+        </tr></thead>
+        <tbody>
+
+        #loop(users, "user") {
+
+            <tr>
+                <td><a target='_blank' href='http://dribbble.com/#(user.dribbble_username)'>#(user.name)</a></td>
+                <td>#(user.website)</td>
+                <td>#(user.twitter)</td>
+                <td>#(user.followers_count)</td>
+            </tr>
+
+        }
+
+        </tbody>
+
+        </table>
+
+</div>
+
+
+</div>
+
+
+}

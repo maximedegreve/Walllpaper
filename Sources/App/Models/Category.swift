@@ -13,6 +13,8 @@ import FluentMySQL
 
 final class Category: Model {
     
+    static var entity = "categories"
+
     var id: Node?
     var name: String
     
