@@ -18,16 +18,16 @@ final class Shot: Model {
     var user: Node
     var dribbbleId: Int
     var title: String
-    var description: String
+    var description: String?
     var imageRetina: String
     var image: String
-    var imageOverriden: Bool = false
+    var imageOverriden: String?
     var viewsCount: Int
     var likesCount: Int
     var createdAt: String
     var exists: Bool = false
     
-    init(user: Node, dribbbleId: Int, title: String, description: String, imageRetina: String, image: String, imageOverriden: Bool, viewsCount: Int, likesCount: Int) {
+    init(user: Node, dribbbleId: Int, title: String, description: String?, imageRetina: String, image: String, imageOverriden: String?, viewsCount: Int, likesCount: Int) {
         self.user = user
         self.dribbbleId = dribbbleId
         self.title = title
@@ -50,7 +50,7 @@ final class Shot: Model {
         image = try node.extract("image")
         imageOverriden = try node.extract("image_overriden")
         viewsCount = try node.extract("views_count")
-        likesCount = try node.extract("liks_count")
+        likesCount = try node.extract("likes_count")
         createdAt = try node.extract("created_at")
     }
     
@@ -70,23 +70,20 @@ final class Shot: Model {
             ])
     }
     
-    func makeJSON(request: Request) throws -> JSON {
-        
-        var portString = ""
-        if let port = request.uri.port {
-            portString = ":" + String(port)
-        }
-        
-        let imageURL = "https://\(request.uri.host)\(portString)/\(image)"
-        let imageURLRetina = "https://\(request.uri.host)\(portString)/\(imageRetina)"
-        
+    func makeJSON() throws -> JSON {
+
         return try JSON(node: [
-            "image": imageURL,
-            "image_retina": imageURLRetina,
-            "title": title,
+            "title": self.title,
+            "description": self.description,
+            "image_retina": self.imageRetina,
+            "image": self.image,
+            "image_overriden": self.image,
+            "views_count": self.image,
+            "likes_count": self.image,
+            "created_at": self.createdAt
             ])
     }
-    
+
     public static func revert(_ database: Database) throws {
         try database.delete("shots")
     }
@@ -101,15 +98,15 @@ final class Shot: Model {
             shot.text("description", optional: true, unique: false, default: nil)
             shot.string("image_retina", length: 250, optional: false, unique: false)
             shot.string("image", length: 250, optional: false, unique: false)
-            shot.int("image_overriden", optional: false, unique: false, default: 0)
-            shot.int("views_count", optional: false, unique: false, default: 0)
+            shot.string("image_overriden", optional: true, unique: false, default: 0)
+            shot.int("views_count", optional: false, unique: false, default: nil)
             shot.int("likes_count", optional: false, unique: false, default: 0)
             shot.date("created_at")
         }
         
     }
     
-    static func dribbbleData(data:[String: Polymorphic]) throws -> Shot{
+    public static func dribbbleData(data:[String: Polymorphic]) throws -> Shot{
         
         var user: User?
 
@@ -133,7 +130,6 @@ final class Shot: Model {
         
         guard let id = data["id"]?.int,
             let title = data["title"]?.string,
-            let description = data["description"]?.string,
             let imageHiDPI = data["images"]?.object?["hidpi"]?.string,
             let imageNormal = data["images"]?.object?["normal"]?.string,
             let viewsCount = data["views_count"]?.int,
@@ -141,22 +137,13 @@ final class Shot: Model {
             let userNode = user?.id else {
                 throw Abort.badRequest
         }
-        
-        let shot = Shot(user: userNode, dribbbleId: id, title: title, description: description, imageRetina: imageHiDPI, image: imageNormal, imageOverriden: false, viewsCount: viewsCount, likesCount: likesCount)
+        let description = data["description"]?.string
+
+        let shot = Shot(user: userNode, dribbbleId: id, title: title, description: description, imageRetina: imageHiDPI, image: imageNormal, imageOverriden: nil, viewsCount: viewsCount, likesCount: likesCount)
         
         return shot
         
     }
     
-    
 }
 
-extension Sequence where Iterator.Element == Shot {
-    
-    func makeJSON(request: Request) throws -> JSON {
-        return try JSON(node: self.map {
-            try $0.makeJSON(request: request)
-        })
-    }
-    
-}

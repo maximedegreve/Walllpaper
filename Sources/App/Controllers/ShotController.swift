@@ -3,13 +3,7 @@ import HTTP
 
 final class ShotController: ResourceRepresentable {
     func index(request: Request) throws -> ResponseRepresentable {
-        return try Shot.all().makeNode().converted(to: JSON.self)
-    }
-
-    func create(request: Request) throws -> ResponseRepresentable {
-        var shot = try request.shot()
-        try shot.save()
-        return shot
+        return try Shot.all().makeJSON()
     }
 
     func show(request: Request, post: Shot) throws -> ResponseRepresentable {
@@ -36,23 +30,18 @@ final class ShotController: ResourceRepresentable {
     }
  */
 
-    func replace(request: Request, post: Shot) throws -> ResponseRepresentable {
-        try post.delete()
-        return try create(request: request)
-    }
 
     func makeResource() -> Resource<Shot> {
         return Resource(
             index: index,
-            store: create,
             show: show,
-            replace: replace,
             //modify: update,
             destroy: delete,
             clear: clear
         )
     }
 }
+
 
 extension Request {
     func shot() throws -> Shot {

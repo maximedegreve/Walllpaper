@@ -20,10 +20,10 @@ final class User: Model {
     var dribbbleUsername: String
     var dribbbleUrl: String
     var dribbbleAccessToken: String?
-    var avatarUrl: String
-    var location: String
-    var website: String
-    var twitter: String
+    var avatarUrl: String?
+    var location: String?
+    var website: String?
+    var twitter: String?
     var followersCount: Int
     var followingCount: Int
     var consented: Bool = false
@@ -36,7 +36,7 @@ final class User: Model {
         case unsupportedCredentials
     }
     
-    init(dribbbleId: Int, dribbbleUsername: String, dribbbleUrl: String, avatarUrl: String, location: String, website: String, twitter: String, followersCount: Int, followingCount: Int, consented: Bool) {
+    init(dribbbleId: Int, dribbbleUsername: String, dribbbleUrl: String, avatarUrl: String?, location: String?, website: String?, twitter: String?, followersCount: Int, followingCount: Int, consented: Bool) {
         self.dribbbleId = dribbbleId
         self.dribbbleUsername = dribbbleUsername
         self.dribbbleUrl = dribbbleUrl
@@ -78,10 +78,10 @@ final class User: Model {
         dict["dribbble_username"] = dribbbleUsername.makeNode()
         dict["dribbble_url"] = dribbbleUrl.makeNode()
         dict["dribbble_access_token"] = dribbbleAccessToken?.makeNode()
-        dict["avatar_url"] = avatarUrl.makeNode()
-        dict["location"] = location.makeNode()
-        dict["website"] = website.makeNode()
-        dict["twitter"] = twitter.makeNode()
+        dict["avatar_url"] = avatarUrl?.makeNode()
+        dict["location"] = location?.makeNode()
+        dict["website"] = website?.makeNode()
+        dict["twitter"] = twitter?.makeNode()
         dict["followers_count"] = try followersCount.makeNode()
         dict["following_count"] = try followingCount.makeNode()
         dict["consented"] = consented.makeNode()
@@ -101,8 +101,8 @@ final class User: Model {
             user.string("dribbble_username", length: 250, optional: false, unique: true)
             user.string("dribbble_url", length: 250, optional: false, unique:true)
             user.string("dribbble_access_token", length: 250, optional: true, unique:true)
-            user.string("avatar_url", length: 250, optional: false, unique: false)
-            user.string("location", length: 250, optional: false, unique: false)
+            user.string("avatar_url", length: 250, optional: true, unique: false)
+            user.string("location", length: 250, optional: true, unique: false)
             user.string("website", length: 250, optional: true, unique: false)
             user.string("twitter", length: 250, optional: true, unique: false)
             user.int("followers_count", optional: false, unique: false, default: 0)
@@ -127,14 +127,15 @@ final class User: Model {
         guard let dribbId = data["id"]?.int,
             let dribbUsername = data["username"]?.string,
             let dribbUrl = data["html_url"]?.string,
-            let avatarUrl = data["avatar_url"]?.string,
-            let location = data["location"]?.string,
-            let website = data["links"]?.object?["web"]?.string,
-            let twitter = data["links"]?.object?["twitter"]?.string,
             let followersCount = data["followers_count"]?.int,
             let followingCount = data["followings_count"]?.int else {
                 throw Abort.badRequest
         }
+        
+        let avatarUrl = data["avatar_url"]?.string
+        let location = data["location"]?.string
+        let website = data["links"]?.object?["web"]?.string
+        let twitter = data["links"]?.object?["twitter"]?.string
         
         let newUser = User(dribbbleId: dribbId, dribbbleUsername: dribbUsername, dribbbleUrl: dribbUrl, avatarUrl: avatarUrl, location: location, website: website, twitter: twitter, followersCount: followersCount, followingCount: followingCount, consented: false)
         

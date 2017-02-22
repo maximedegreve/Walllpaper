@@ -7,17 +7,33 @@
 #export("body") {
 
     <div class="row">
-    <form class="form-inline" action="/admin" method="POST">
-        <div class="form-group">
-            <label for="id">Dribbble Id</label>
-            <input type="text" name="shot-id"><br>
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+        <form class="form-inline" action="/admin" method="POST">
+            <div class="form-group">
+                <label for="id">Dribbble Id</label>
+                <input type="text" name="shot-id"><br>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
 
-</div>
     #loop(shots, "shot") {
-        <img src="#(shot.image_retina)"/>
+
+        <div data-idShot=#(shot.id)" class="col-md-2" style="height: auto; margin-bottom: 40px;">
+            <img style='display: block;' height='auto' width='100%' src="#(shot.image_retina)"/>
+            <h5>#(shot.title)</h5>
+            <!-- Single button -->
+            <div class="btn-group" style="width: 100%; margin-top: 10px;">
+                <button type="button" style="width: 100%;" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                Actions <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="index.php?deleteItemWithId=#(shot.id)">Delete</a></li>
+                    <li class="divider"></li>
+                    <li><a href="index.php?deleteItemWithId=#(shot.id)">Delete</a></li>
+                </ul>
+            </div>
+        </div>
+
     }
 
 }
