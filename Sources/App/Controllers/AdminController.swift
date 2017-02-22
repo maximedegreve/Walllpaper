@@ -69,8 +69,8 @@ final class AdminController {
     
     func creators(_ request: Request) throws -> ResponseRepresentable {
         
-        let users = try User.query().sort("created_at", .descending).all().makeNode()
-        
+        let users = try User.withShots().makeNode()
+                
         return try drop.view.make("admin-creator", [
             "users": users,
             ])

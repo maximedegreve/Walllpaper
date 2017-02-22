@@ -149,6 +149,28 @@ final class User: Model {
         
     }
     
+    static func withShots() throws -> [User]{
+        
+        
+        if let mysql = drop.database?.driver as? MySQLDriver {
+            
+            let results = try mysql.raw("SELECT users.* FROM shots INNER JOIN users ON users.id = shots.user_id GROUP BY users.id")
+            
+            guard case .array(let array) = results else {
+                return [User]()
+            }
+            
+            let users = try array.map {
+                try User(node: $0)
+            }
+            
+            return users
+        }
+        
+        return [User]()
+        
+    }
+    
     
     
 }
