@@ -18,6 +18,7 @@ final class AdminController {
 
         drop.get("admin", handler: index)
         drop.post("admin", handler: post)
+        drop.get("admin/delete", handler: delete)
         drop.get("admin/creators", handler: creators)
         
     }
@@ -44,6 +45,21 @@ final class AdminController {
                 "categories": try getCategories().makeNode(),
                 ])
         
+    }
+    
+    func delete(_ request: Request) throws -> ResponseRepresentable {
+        
+        guard let shotID = request.data["shot-id"]?.int else {
+            throw Abort.badRequest
+        }
+        
+        guard let shot = try Shot.find(shotID) else {
+            throw Abort.badRequest
+        }
+        
+        try shot.delete()
+        
+        return Response(redirect: "/admin")
     }
     
     func post(_ request: Request) throws -> ResponseRepresentable {

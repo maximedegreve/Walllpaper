@@ -28,15 +28,12 @@
                 </label><br>
             }
 
-            <!-- Single button -->
             <div class="btn-group" style="width: 100%; margin-top: 10px;">
                 <button type="button" style="width: 100%;" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 Actions <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu" role="menu">
-                    <li><a href="index.php?deleteItemWithId=#(shot.id)">Delete</a></li>
-                    <li class="divider"></li>
-                    <li><a href="index.php?deleteItemWithId=#(shot.id)">Delete</a></li>
+                    <li><a href="/admin/delete?shot-id=#(shot.id)">Delete</a></li>
                 </ul>
             </div>
         </div>
