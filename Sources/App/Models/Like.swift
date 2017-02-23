@@ -18,6 +18,7 @@ final class Like: Model {
     var user: Node
     var shot: Node
     var createdAt: String
+    var exists: Bool = false
     
     init(user: Node, shot: Node) {
         self.user = user

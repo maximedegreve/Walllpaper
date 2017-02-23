@@ -17,6 +17,7 @@ final class Category: Model {
 
     var id: Node?
     var name: String
+    var exists: Bool = false
     
     init(name: String) {
         self.name = name

@@ -128,6 +128,14 @@ final class Shot: Model {
             
         }
         
+        guard let animated = data["animated"]?.bool else {
+            throw Abort.badRequest
+        }
+        
+        if animated == true{
+            throw Abort.custom(status: .forbidden, message: "Animated gifs are not allowed")
+        }
+        
         guard let id = data["id"]?.int,
             let title = data["title"]?.string,
             let imageHiDPI = data["images"]?.object?["hidpi"]?.string,
