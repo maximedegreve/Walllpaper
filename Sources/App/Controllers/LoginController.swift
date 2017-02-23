@@ -13,9 +13,8 @@ import Auth
 
 final class LoginController {
     
-    //https://dribbble.com/oauth/authorize?redirect_uri=http://0.0.0.0:8080/api/login&client_id=f4128949138dccac8ea96cc32f77ba892745ceaa93def72774ca0b2dbfc4d0d6&scope=write public
-    
     func addRoutes(to drop: Droplet) {
+        drop.get("admin/login", handler: loginAdmin)
         drop.get("api/login", handler: login)
     }
     
@@ -30,10 +29,22 @@ final class LoginController {
         }
         
         let token = DribbbleAccessToken(string: accessToken)
+        
+        if try request.session().data["isAdmin"]?.bool == true{
+            try request.auth.login(token)
+            return Response(redirect: "/admin")
+        }
+        
         let user = try User.authenticate(credentials: token)
 
         return user as! ResponseRepresentable
         
     }
+    
+    func loginAdmin(_ request: Request) throws -> ResponseRepresentable {
+        try request.session().data["isAdmin"] = true
+        return Response(redirect: Dribbble.loginLink())
+    }
+    
 
 }

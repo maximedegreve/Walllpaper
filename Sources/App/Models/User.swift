@@ -96,6 +96,24 @@ final class User: Model {
 
     }
     
+    func makeJSON() throws -> JSON {
+        
+        return try JSON(node: [
+            "id": self.id,
+            "name": self.name,
+            "access_token": self.accessToken,
+            "dribbble_id": self.dribbbleId,
+            "dribbble_username": self.dribbbleUsername,
+            "dribbble_url": self.dribbbleUrl,
+            "location": self.location,
+            "website": self.website,
+            "twitter": self.twitter,
+            "followers_count": self.followersCount,
+            "following_count": self.followingCount,
+            "created_at": self.createdAt
+            ])
+    }
+    
     static func prepare(_ database: Database) throws {
         
         try database.create("users") { user in
@@ -181,7 +199,6 @@ extension User: Auth.User {
     
     static func authenticate(credentials: Credentials) throws -> Auth.User {
         
-        
         var user: User?
         
         switch credentials {
@@ -203,6 +220,7 @@ extension User: Auth.User {
             
             // Update Dribbble token
             user?.dribbbleAccessToken = accessToken.string
+
             try user?.save()
             
         case let accessToken as AccessToken:

@@ -40,6 +40,11 @@ final class Dribbble {
         
     }
     
+    static func loginLink() -> String{
+        let redirect_url = drop.config["dribbble", "redirect_link"]?.string ?? ""
+        return "https://dribbble.com/oauth/authorize?redirect_uri=\(redirect_url)&client_id=\(self.client_id)&scope=write public"
+    }
+    
     static func user(token: String) throws -> Response{
         
         return try drop.client.get("\(self.apiURL)user?access_token=\(token)");

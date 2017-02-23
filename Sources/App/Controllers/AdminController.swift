@@ -14,13 +14,23 @@ import Fluent
 
 final class AdminController {
     
+    let protect = ProtectMiddleware(error:
+        Abort.custom(status: .forbidden, message: "Not authorized.")
+    )
+    
     func addRoutes(to drop: Droplet) {
 
-        drop.get("admin", handler: index)
-        drop.post("admin", handler: post)
-        drop.get("admin/delete", handler: delete)
-        drop.get("admin/creators", handler: creators)
-        
+        drop.group(protect) { secure in
+            
+            // needs to check if user is valid here
+            
+            drop.get("admin", handler: index)
+            drop.post("admin", handler: post)
+            drop.get("admin/delete", handler: delete)
+            drop.get("admin/creators", handler: creators)
+            
+        }
+
     }
     
     func getShots() throws -> [Shot]{
