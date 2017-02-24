@@ -203,6 +203,10 @@ extension User: Auth.User {
         
         switch credentials {
             
+        case let identifier as Identifier:
+            
+            user = try User.query().filter("id", identifier.id).first()
+            
         case let accessToken as DribbbleAccessToken:
             
             let response = try Dribbble.user(token: accessToken.string)

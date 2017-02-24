@@ -14,7 +14,7 @@ import Fluent
 
 final class AdminController {
     
-    let protect = ProtectMiddleware(error:
+    let protect = AdminProtectMiddleware(error:
         Abort.custom(status: .forbidden, message: "Not authorized.")
     )
     
@@ -22,12 +22,10 @@ final class AdminController {
 
         drop.group(protect) { secure in
             
-            // needs to check if user is valid here
-            
-            drop.get("admin", handler: index)
-            drop.post("admin", handler: post)
-            drop.get("admin/delete", handler: delete)
-            drop.get("admin/creators", handler: creators)
+            secure.get("admin", handler: index)
+            secure.post("admin", handler: post)
+            secure.get("admin/delete", handler: delete)
+            secure.get("admin/creators", handler: creators)
             
         }
 
@@ -87,10 +85,7 @@ final class AdminController {
             
         }
         
-        return try drop.view.make("admin", [
-            "shots": try getShots().makeNode(),
-            "categories": try getCategories().makeNode(),
-            ])
+        return Response(redirect: "/admin")
     }
     
     func creators(_ request: Request) throws -> ResponseRepresentable {
