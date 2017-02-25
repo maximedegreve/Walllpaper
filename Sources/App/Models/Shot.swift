@@ -155,3 +155,9 @@ final class Shot: Model {
     
 }
 
+extension Shot {
+    func categories() throws -> Siblings<Category> {
+        return try siblings()
+    }
+}
+

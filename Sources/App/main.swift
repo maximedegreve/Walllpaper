@@ -2,12 +2,15 @@ import Vapor
 import VaporMySQL
 import Auth
 import Sessions
+import Fluent
+import FluentMySQL
 
 let drop = Droplet()
 
 try drop.addProvider(VaporMySQL.Provider.self)
 drop.preparations.append(User.self)
 drop.preparations.append(Shot.self)
+drop.preparations.append(Pivot<Shot, Category>.self)
 drop.preparations.append(Category.self)
 drop.preparations.append(Like.self)
 

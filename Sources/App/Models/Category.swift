@@ -56,3 +56,9 @@ final class Category: Model {
     }
     
 }
+
+extension Category {
+    func shots() throws -> Siblings<Shot> {
+        return try siblings()
+    }
+}
