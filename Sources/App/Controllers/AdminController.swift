@@ -13,14 +13,10 @@ import Auth
 import Fluent
 
 final class AdminController {
-    
-    let protect = AdminProtectMiddleware(error:
-        Abort.custom(status: .forbidden, message: "Not authorized.")
-    )
-    
+
     func addRoutes(to drop: Droplet) {
 
-        drop.group(protect) { secure in
+        drop.group(AdminProtectMiddleware()) { secure in
             
             secure.get("admin", handler: index)
             secure.post("admin", handler: post)
