@@ -25,7 +25,8 @@
             #loop(shot.categories, "category") {
 
                 <label class="checkbox-inline">
-                    <input #if(category.isIncluded){ checked="checked" } type="checkbox" name="check_list[]" value="#(category.id)">#(category.name)
+                    <input #if(category.included){ checked="checked" } type="checkbox" name="check_list[]" value="#(category.id)">#(category.name)
+                #(category.included)
                 </label><br>
             }
 
