@@ -24,7 +24,7 @@
 
         #loop(users, "user") {
 
-            <tr>
+            <tr #if(user.consented) { style="background: rgb(183,203,168)" }>
                 <td><a target='_blank' href='http://dribbble.com/#(user.dribbble_username)'>#(user.name)</a></td>
                 <td>#(user.website)</td>
                 <td>#(user.twitter)</td>
