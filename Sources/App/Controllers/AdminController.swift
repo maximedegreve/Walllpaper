@@ -85,8 +85,15 @@ final class AdminController {
             throw Abort.badRequest
         }
         
-        var pivot = Pivot<Shot, Category>(shot, category)   // Create the relationship
-        try pivot.save()
+        let pivot = try Pivot<Shot, Category>.query().filter("shot_id", shotID).filter("category_id", categoryID).first()
+        
+        if pivot != nil{
+            // Already exists
+            throw Abort.badRequest
+        }
+        
+        var newPivot = Pivot<Shot, Category>(shot, category)   // Create the relationship
+        try newPivot.save()
                 
         return Response(status: .created, body: "Added to category...")
     }
@@ -101,8 +108,11 @@ final class AdminController {
             throw Abort.badRequest
         }
         
-        let pivot = try Pivot<Shot, Category>.query().filter("shot_id", shotID).filter("category_id", categoryID).first()
-        try pivot?.delete()
+        let pivots = try Pivot<Shot, Category>.query().filter("shot_id", shotID).filter("category_id", categoryID).all()
+        
+        for pivot in pivots{
+            try pivot.delete()
+        }
 
         return Response(status: .created, body: "Deleted the category...")
     }
