@@ -87,6 +87,7 @@ final class Shot: Model {
             "categories": try self.categories().all().makeNode(),
             "created_at": self.createdAt.makeNode()
             ])
+        
     }
 
     public static func revert(_ database: Database) throws {

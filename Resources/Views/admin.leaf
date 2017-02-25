@@ -19,13 +19,13 @@
     #loop(shots, "shot") {
 
         <div data-idShot=#(shot.id) class="col-md-2" style="height: auto; margin-bottom: 40px;">
-            <img style='display: block;' height='auto' width='100%' src="#(shot.image_retina)"/>
+            <img style='display: block;' height='auto' width='100%' src="#(shot.image)"/>
             <h5>#(shot.title)</h5>
 
-            #loop(categories, "category") {
+            #loop(shot.categories, "category") {
 
                 <label class="checkbox-inline">
-                    <input type="checkbox" name="check_list[]" value="#(category.id)">#(category.name)
+                    <input #if(category.isIncluded){ checked="checked" } type="checkbox" name="check_list[]" value="#(category.id)">#(category.name)
                 </label><br>
             }
 

@@ -27,6 +27,9 @@ login.addRoutes(to: drop)
 let admin = AdminController()
 admin.addRoutes(to: drop)
 
+let adminCreators = AdminCreatorsController()
+adminCreators.addRoutes(to: drop)
+
 drop.resource("api/shots", ShotController())
 
 drop.run()

@@ -21,7 +21,6 @@ final class AdminController {
             secure.get("admin", handler: index)
             secure.post("admin", handler: post)
             secure.get("admin","delete", handler: delete)
-            secure.get("admin","creators", handler: creators)
             secure.post("admin","category", handler: categoryPost)
             secure.delete("admin","category", handler: categoryDelete)
         }
@@ -46,8 +45,7 @@ final class AdminController {
     func index(_ request: Request) throws -> ResponseRepresentable {
 
         return try drop.view.make("admin", [
-                "shots": try getShots().makeNode(),
-                "categories": try getCategories().makeNode(),
+                "shots": try getShots().makeAdminNode(),
                 ])
         
     }
@@ -135,14 +133,47 @@ final class AdminController {
         return Response(redirect: "/admin")
     }
     
-    func creators(_ request: Request) throws -> ResponseRepresentable {
-        
-        let users = try User.withShots().makeNode()
-                
-        return try drop.view.make("admin-creator", [
-            "users": users,
-            ])
-        
-    }
-    
 }
+
+private extension Sequence where Iterator.Element: Shot {
+    func makeAdminNode() throws -> Node {
+        return try Node(node: self.map {
+            try $0.makeAdminShotNode()
+        })
+    }
+}
+
+private extension Shot {
+    
+    func makeAdminShotNode() throws -> Node {
+        
+        let categories = try self.categories().all()
+        let possibleCategories = try Category.query().all()
+        
+        var categoriesList = [Node]()
+        for category in possibleCategories{
+            
+            let isIncluded = categories.contains(where: { (cat) -> Bool in
+                return cat.id == category.id
+            })
+
+            let node = try Node(node: [
+                "id": category.id,
+                "name": category.name,
+                "included": isIncluded,
+                ])
+            categoriesList.append(node)
+            
+        }
+        
+        return try Node(node: [
+            "id": self.id,
+            "title": self.title,
+            "image": self.image,
+            "categories": try categoriesList.makeNode(),
+            ])
+
+    }
+
+}
+
