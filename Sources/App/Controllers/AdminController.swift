@@ -20,8 +20,9 @@ final class AdminController {
             
             secure.get("admin", handler: index)
             secure.post("admin", handler: post)
-            secure.get("admin/delete", handler: delete)
-            secure.get("admin/creators", handler: creators)
+            secure.get("admin","delete", handler: delete)
+            secure.get("admin","creators", handler: creators)
+            secure.post("admin","category", handler: categoryPost)
             
         }
 
@@ -64,6 +65,30 @@ final class AdminController {
         try shot.delete()
         
         return Response(redirect: "/admin")
+    }
+    
+    func categoryPost(_ request: Request) throws -> ResponseRepresentable {
+        
+        guard let shotID = request.data["shot-id"]?.int else {
+            throw Abort.badRequest
+        }
+        
+        guard let shot = try Shot.find(shotID) else {
+            throw Abort.badRequest
+        }
+        
+        guard let categoryID = request.data["category-id"]?.int else {
+            throw Abort.badRequest
+        }
+        
+        guard let category = try Category.find(categoryID) else {
+            throw Abort.badRequest
+        }
+        
+        var pivot = Pivot<Shot, Category>(shot, category)   // Create the relationship
+        try pivot.save()
+                
+        return Response(status: .created, body: "Added to category...")
     }
     
     func post(_ request: Request) throws -> ResponseRepresentable {
