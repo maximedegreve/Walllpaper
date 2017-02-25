@@ -23,7 +23,7 @@ final class AdminController {
             secure.get("admin","delete", handler: delete)
             secure.get("admin","creators", handler: creators)
             secure.post("admin","category", handler: categoryPost)
-            
+            secure.delete("admin","category", handler: categoryDelete)
         }
 
     }
@@ -89,6 +89,22 @@ final class AdminController {
         try pivot.save()
                 
         return Response(status: .created, body: "Added to category...")
+    }
+    
+    func categoryDelete(_ request: Request) throws -> ResponseRepresentable {
+
+        guard let shotID = request.data["shot-id"]?.int else {
+            throw Abort.badRequest
+        }
+
+        guard let categoryID = request.data["category-id"]?.int else {
+            throw Abort.badRequest
+        }
+        
+        let pivot = try Pivot<Shot, Category>.query().filter("shot_id", shotID).filter("category_id", categoryID).first()
+        try pivot?.delete()
+
+        return Response(status: .created, body: "Deleted the category...")
     }
     
     func post(_ request: Request) throws -> ResponseRepresentable {

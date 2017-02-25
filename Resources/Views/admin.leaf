@@ -23,6 +23,7 @@
             <h5>#(shot.title)</h5>
 
             #loop(categories, "category") {
+
                 <label class="checkbox-inline">
                     <input type="checkbox" name="check_list[]" value="#(category.id)">#(category.name)
                 </label><br>

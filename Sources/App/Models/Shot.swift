@@ -71,16 +71,21 @@ final class Shot: Model {
     }
     
     func makeJSON() throws -> JSON {
-
-        return try JSON(node: [
-            "title": self.title,
-            "description": self.description,
-            "image_retina": self.imageRetina,
-            "image": self.image,
-            "image_overriden": self.image,
-            "views_count": self.image,
-            "likes_count": self.image,
-            "created_at": self.createdAt
+        
+        // Optionals
+        let description = self.description?.makeNode() ?? nil
+        let imageOverriden = self.imageOverriden?.makeNode() ?? nil
+        
+        return JSON([
+            "title": self.title.makeNode(),
+            "description": description,
+            "image_retina": self.imageRetina.makeNode(),
+            "image": self.image.makeNode(),
+            "image_overriden": imageOverriden,
+            "views_count": try self.viewsCount.makeNode(),
+            "likes_count": try self.likesCount.makeNode(),
+            "categories": try self.categories().all().makeNode(),
+            "created_at": self.createdAt.makeNode()
             ])
     }
 
