@@ -36,12 +36,6 @@ final class AdminController {
         
     }
     
-    func getCategories() throws -> [Category]{
-        
-        return try Category.query().all()
-        
-    }
-    
     func index(_ request: Request) throws -> ResponseRepresentable {
 
         return try drop.view.make("admin", [
