@@ -13,8 +13,9 @@ final class ShotController: ResourceRepresentable {
             throw Abort.custom(status: .badRequest, message: "Category not found")
         }
         
-        return try category.shots().union(User.self).filter(User.self, "consented", true).all().makeJSON()
-
+        // Don't forget to change this
+        let test = try category.shots().union(User.self).union(Like.self).filter(User.self, "consented", false).all()
+        return try category.shots().union(Like.self).union(User.self).filter(User.self, "consented", false).all().makeJSON()
         
     }
 
