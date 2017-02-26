@@ -26,7 +26,7 @@
 
             <tr #if(user.consented) { style="background: rgb(183,203,168)" }>
                 <td><a target='_blank' href='http://dribbble.com/#(user.dribbble_username)'>#(user.name)</a></td>
-                <td>#(user.website)</td>
+                <td><a href="#(user.website)">#(user.website)</a></td>
                 <td>#(user.twitter)</td>
                 <td>#(user.followers_count)</td>
             </tr>
