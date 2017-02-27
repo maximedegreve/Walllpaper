@@ -10,7 +10,7 @@ import Vapor
 import HTTP
 
 final class LikeController: ResourceRepresentable {
-
+    
     func delete(request: Request, like: Like) throws -> ResponseRepresentable {
         try like.delete()
         return JSON([:])
@@ -33,7 +33,16 @@ final class LikeController: ResourceRepresentable {
 
 extension Request {
     func like() throws -> Like {
-        guard let json = json else { throw Abort.badRequest }
-        return try Like(node: json)
+        
+        guard let userId = try self.auth.user().id?.int else{
+            throw Abort.badRequest
+        }
+        guard let shotId = self.data["shot-id"]?.int else {
+            throw Abort.badRequest
+        }
+        
+        let like = Like(user: try userId.makeNode(), shot: try shotId.makeNode())
+        
+        return like
     }
 }
