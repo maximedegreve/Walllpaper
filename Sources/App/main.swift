@@ -31,6 +31,6 @@ let adminCreators = AdminCreatorsController()
 adminCreators.addRoutes(to: drop)
 
 drop.resource("api/shots", ShotController())
-drop.resource("api/likes", ShotController())
+drop.resource("api/likes", LikeController())
 
 drop.run()

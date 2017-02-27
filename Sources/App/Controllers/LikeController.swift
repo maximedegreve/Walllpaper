@@ -33,7 +33,7 @@ final class LikeController: ResourceRepresentable {
 
 extension Request {
     func like() throws -> Like {
-        
+
         guard let userId = try self.auth.user().id?.int else{
             throw Abort.badRequest
         }
