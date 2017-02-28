@@ -81,7 +81,7 @@ final class Shot: Model {
             "views_count": self.viewsCount,
             "likes_count": self.likesCount,
             "categories": try self.categories().all().makeJSON(),
-            "user_id":  try self.user().get()?.makeJSON(),
+            "user":  try self.user().get()?.makeJSON(),
             "created_at": self.createdAt.makeNode()
             ])
         
