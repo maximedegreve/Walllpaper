@@ -1,5 +1,6 @@
 import Vapor
 import HTTP
+import FluentMySQL
 
 final class ShotController: ResourceRepresentable {
     
@@ -14,8 +15,7 @@ final class ShotController: ResourceRepresentable {
         }
         
         // Don't forget to change this
-        let test = try category.shots().union(User.self).union(Like.self).filter(User.self, "consented", false).all()
-        return try category.shots().union(Like.self).union(User.self).filter(User.self, "consented", false).all().makeJSON()
+        return try category.shots().union(User.self).filter(User.self, "consented", false).all().makeJSON()
         
     }
 
@@ -23,6 +23,32 @@ final class ShotController: ResourceRepresentable {
         return Resource(
             index: index
         )
+    }
+    
+    func shotsIn(category: Category) throws -> [Shot]{
+        
+        if let mysql = drop.database?.driver as? MySQLDriver {
+            
+            
+            
+            //SELECT shots.id, shots.dribb_id, shots.title, shots.image_retina, shots.image_nonretina, shots.likes_count, users.name, users.avatar_url,shots.created_at, shots.image_overruled, shots.categories, (SELECT count(*) FROM likes WHERE likes.shot_id = shots.id AND likes.user_id = :user_id) AS liked FROM shots INNER JOIN users ON users.dribb_uid = shots.dribb_uid WHERE creator = 1 AND FIND_IN_SET(:tagId,shots.categories) > 0 ORDER BY shots.created_at DESC LIMIT :offset, :amount");
+            
+            
+            let results = try mysql.raw("SELECT * FROM categories WHERE name = \(category.name) ")
+        
+            guard case .array(let array) = results else {
+                return [Shot]()
+            }
+            
+            let users = try array.map {
+                try Shot(node: $0)
+            }
+            
+            return users
+        }
+        
+        return [Shot]()
+        
     }
 }
 

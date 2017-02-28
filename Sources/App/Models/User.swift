@@ -101,7 +101,6 @@ final class User: Model {
         return try JSON(node: [
             "id": self.id,
             "name": self.name,
-            "access_token": self.accessToken,
             "dribbble_id": self.dribbbleId,
             "dribbble_username": self.dribbbleUsername,
             "dribbble_url": self.dribbbleUrl,

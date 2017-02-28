@@ -15,7 +15,7 @@ import Foundation
 final class Shot: Model {
     
     var id: Node?
-    var user: Node
+    var user_id: Node
     var dribbbleId: Int
     var title: String
     var description: String?
@@ -28,7 +28,7 @@ final class Shot: Model {
     var exists: Bool = false
     
     init(user: Node, dribbbleId: Int, title: String, description: String?, imageRetina: String, image: String, imageOverriden: String?, viewsCount: Int, likesCount: Int) {
-        self.user = user
+        self.user_id = user
         self.dribbbleId = dribbbleId
         self.title = title
         self.description = description
@@ -42,7 +42,7 @@ final class Shot: Model {
     
     init(node: Node, in context: Context) throws {
         id = try node.extract("id")
-        user = try node.extract("user_id")
+        user_id = try node.extract("user_id")
         dribbbleId = try node.extract("dribbble_id")
         title = try node.extract("title")
         description = try node.extract("description")
@@ -57,7 +57,7 @@ final class Shot: Model {
     func makeNode(context: Context) throws -> Node {
         return try Node(node: [
             "id": id,
-            "user_id": user,
+            "user_id": user_id,
             "dribbble_id": dribbbleId,
             "title": title,
             "description": description,
@@ -71,20 +71,17 @@ final class Shot: Model {
     }
     
     func makeJSON() throws -> JSON {
-        
-        // Optionals
-        let description = self.description?.makeNode() ?? nil
-        let imageOverriden = self.imageOverriden?.makeNode() ?? nil
-        
-        return JSON([
-            "title": self.title.makeNode(),
-            "description": description,
-            "image_retina": self.imageRetina.makeNode(),
-            "image": self.image.makeNode(),
-            "image_overriden": imageOverriden,
-            "views_count": try self.viewsCount.makeNode(),
-            "likes_count": try self.likesCount.makeNode(),
+
+        return try JSON(node: [
+            "title": self.title,
+            "description": self.description,
+            "image_retina": self.imageRetina,
+            "image": self.image,
+            "image_overriden": self.imageOverriden,
+            "views_count": self.viewsCount,
+            "likes_count": self.likesCount,
             "categories": try self.categories().all().makeNode(),
+            "user_id":  try self.user().get(),
             "created_at": self.createdAt.makeNode()
             ])
         
@@ -164,6 +161,9 @@ final class Shot: Model {
 extension Shot {
     func categories() throws -> Siblings<Category> {
         return try siblings()
+    }
+    func user() throws -> Parent<User> {
+        return try parent(self.user_id)
     }
 }
 
