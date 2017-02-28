@@ -95,7 +95,7 @@ final class User: Model {
         return .object(dict)
 
     }
-    
+
     func makeJSON() throws -> JSON {
         
         return try JSON(node: [
