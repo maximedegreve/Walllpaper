@@ -74,6 +74,8 @@ final class User: Model {
     
     func makeNode(context: Context) throws -> Node {
         
+        // Never return this in calls, use makeJSON instead for calls.
+        
         var dict: [String: Node] = [:]
         dict["id"] = id
         dict["name"] = name.makeNode()

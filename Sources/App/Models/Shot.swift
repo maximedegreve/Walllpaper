@@ -71,7 +71,7 @@ final class Shot: Model {
     }
     
     func makeJSON() throws -> JSON {
-
+        
         return try JSON(node: [
             "title": self.title,
             "description": self.description,
@@ -84,6 +84,15 @@ final class Shot: Model {
             "user":  try self.user().get()?.makeJSON(),
             "created_at": self.createdAt.makeNode()
             ])
+        
+    }
+    
+    func makeJSON(user: User) throws -> JSON{
+        
+        var normalJSON = try makeJSON()
+        let liked = try likedByUser(user: user).makeNode()
+        normalJSON["liked"] = JSON(liked)
+        return normalJSON
         
     }
 
@@ -164,6 +173,20 @@ extension Shot {
     }
     func user() throws -> Parent<User> {
         return try parent(self.user_id)
+    }
+    func likedByUser(user: User) throws -> Bool {
+        
+        guard let shotId = self.id, let userId = user.id else {
+            return false
+        }
+        
+        let liked = try Like.query().filter("user_id", userId).filter("shot_id", shotId).count()
+        
+        if liked > 0 {
+            return true
+        }
+        
+        return false
     }
 }
 
