@@ -57,9 +57,15 @@ final class Dribbble {
         
     }
     
-    static func isFollowingUser(token: String, id: Int) throws -> Response{
+    static func isFollowingUser(token: String, id: Int) throws -> Bool{
         
-        return try drop.client.get("\(self.apiURL)user/following/\(id)?access_token=\(token)")
+        let statusCode =  try drop.client.get("\(self.apiURL)user/following/\(id)?access_token=\(token)").status.statusCode
+        
+        if statusCode == 204{
+            return true
+        } else {
+            return false
+        }
         
     }
     

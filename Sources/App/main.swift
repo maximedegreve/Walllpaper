@@ -4,6 +4,7 @@ import Auth
 import Sessions
 import Fluent
 import FluentMySQL
+import Routing
 
 let drop = Droplet()
 
@@ -33,10 +34,21 @@ adminCreators.addRoutes(to: drop)
 // API
 
 drop.group("api") { api in
+    
     api.resource("public-shots", PublicShotController())
+    
     api.group(ProtectMiddleware()) { secure in
+        
         secure.resource("shots", ShotController())
         secure.resource("likes", LikeController())
+        secure.group("dribbble") { dribbble in
+            
+            let dribbbleController = DribbbleController()
+            dribbble.get("follows-creators", handler: dribbbleController.isFollowingCreators)
+            dribbble.get("follow-creators", handler: dribbbleController.followTheCreators)
+            
+        }
+        
     }
 }
 
