@@ -31,8 +31,8 @@ let adminCreators = AdminCreatorsController()
 adminCreators.addRoutes(to: drop)
 
 drop.group(ProtectMiddleware()) { secure in
-    drop.resource("api/shots", ShotController())
-    drop.resource("api/likes", LikeController())
+    secure.resource("api/shots", ShotController())
+    secure.resource("api/likes", LikeController())
 }
 
 drop.run()

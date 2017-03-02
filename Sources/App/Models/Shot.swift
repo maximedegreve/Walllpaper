@@ -190,3 +190,13 @@ extension Shot {
     }
 }
 
+
+extension Sequence where Iterator.Element: Shot {
+    func makeJSON(user: User) throws -> JSON {
+        return try JSON(node: self.map {
+            try $0.makeJSON(user: user)
+        })
+    }
+}
+
+

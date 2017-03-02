@@ -34,14 +34,15 @@ final class LikeController: ResourceRepresentable {
 extension Request {
     func like() throws -> Like {
 
-        guard let userId = try self.auth.user().id?.int else{
-            throw Abort.badRequest
-        }
-        guard let shotId = self.data["shot-id"]?.int else {
-            throw Abort.badRequest
+        guard let userId = try self.user().id else {
+            throw Abort.custom(status: .badRequest, message: "Something went wrong")
         }
         
-        let like = Like(user: try userId.makeNode(), shot: try shotId.makeNode())
+        guard let shotId = self.data["shot-id"]?.int else {
+            throw Abort.custom(status: .badRequest, message: "No shot-id was provided")
+        }
+        
+        let like = Like(user: userId.makeNode(), shot: try shotId.makeNode())
         
         return like
     }

@@ -237,7 +237,7 @@ extension User: Auth.User {
         }
 
         guard let u = user else {
-            throw Abort.custom(status: .badRequest, message: "User not found")
+            throw Abort.custom(status: .badRequest, message: "Token invalid")
         }
                 
         return u

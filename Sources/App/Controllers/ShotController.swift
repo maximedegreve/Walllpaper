@@ -14,8 +14,9 @@ final class ShotController: ResourceRepresentable {
             throw Abort.custom(status: .badRequest, message: "Category not found")
         }
         
-        // Don't forget to add makejson user here
-        return try category.shots().union(User.self).filter(User.self, "consented", false).all().makeJSON()
+        let user = try request.user()
+        
+        return try category.shots().union(User.self).filter(User.self, "consented", false).all().makeJSON(user: user)
         
     }
 
@@ -25,26 +26,6 @@ final class ShotController: ResourceRepresentable {
         )
     }
     
-    func shotsIn(category: Category) throws -> [Shot]{
-        
-        if let mysql = drop.database?.driver as? MySQLDriver {
-
-            let results = try mysql.raw("SELECT * FROM categories WHERE name = \(category.name) ")
-        
-            guard case .array(let array) = results else {
-                return [Shot]()
-            }
-            
-            let users = try array.map {
-                try Shot(node: $0)
-            }
-            
-            return users
-        }
-        
-        return [Shot]()
-        
-    }
 }
 
 
