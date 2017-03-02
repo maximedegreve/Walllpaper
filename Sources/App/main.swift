@@ -19,6 +19,22 @@ let memory = MemorySessions()
 let sessions = SessionsMiddleware(sessions: memory)
 drop.middleware.append(sessions)
 
+drop.get("/") { request in
+    return try drop.view.make("index")
+}
+
+drop.get("terms") { request in
+    return try drop.view.make("terms")
+}
+
+drop.get("privacy") { request in
+    return try drop.view.make("privacy")
+}
+
+drop.get("support") { request in
+    return try drop.view.make("support")
+}
+
 let auth = AuthMiddleware(user: User.self)
 drop.middleware.append(auth)
 

@@ -1,0 +1,10 @@
+#extend("base")
+
+#export("head") {
+    <title>Walllpaper - Support</title>
+}
+
+#export("body") {
+<h3>Please contact us on:</h3>
+<p><a href="mailto:feedback@walllpaperapp.com">feedback@walllpaperapp.com</a>.</p>
+}

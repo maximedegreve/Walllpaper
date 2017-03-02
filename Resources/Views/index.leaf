@@ -1,0 +1,59 @@
+#extend("base")
+
+#export("head") {
+    <title>Walllpaper - Dribbble art turned into wallpapers for your phone</title>
+    <link rel="stylesheet" href="/styles/app.css">
+}
+
+#export("body") {
+
+    <div class="container">
+
+        <div class="leftColumn">
+            <div class="imageHolder">
+                <img src="/images/mainImage.png"/>
+                <div class="video">
+                    <video poster="/images/videopreview.jpg" preload="auto" width="auto" height="100%" autoplay="autoplay" loop="loop">
+                        <source src="/images/video.mp4" type="video/mp4">
+                        <source src="/images/video.webm" type="video/webm">
+                    </video>
+                </div>
+            </div>
+        </div>
+
+        <div class="rightColumn">
+
+            <div class="centerdiv">
+                <img class="illustration" src="/images/illustration.jpg"/>
+                <h1>Walllpaper</h1>
+                <p>Turn Dribbble shots into backgrounds for every iOS device.</p>
+            <div>
+
+            <a href="https://itunes.apple.com/us/app/keynote/id1050415023?mt=8" target="_blank" class="btn">Get it in the App store</a>
+        </div>
+
+        <div class="footer">
+            <ul class="items">
+                <li class="item">
+                    <img width="22" height="32" src="/images/phone.png"/>
+                    <h2>iPad,iPhone 4,5,6...</h2>
+                    <p>Wallpapers for every iOS device, even upcoming ones.</p>
+                </li>
+
+                <li class="item">
+                    <img width="32" height="32" src="/images/pallete.png"/>
+                    <h2>We don’t store images</h2>
+                    <p>All the “Photoshop” work happens on the device.</p>
+                </li>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <div class="share">
+        <a href="http://twitter.com/home?status=Walllpaper%20App:%20Free%20wallpapers%20based%20on%20@Dribbble%20shots%20for%20iOS%20@walllpaperapp%20https://walllpaperapp.com/" target="_blank" class="twitter"><img src="/images/twitter.png"/></a>
+        <a href="https://www.facebook.com/walllpaperapp" target="_blank" class="facebook"> <img src="/images/facebook.png"/></a>
+    </div>
+
+}
