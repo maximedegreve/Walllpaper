@@ -1,6 +1,25 @@
 import Vapor
 import HTTP
 import FluentMySQL
+import Fluent
+
+final class PublicShotController: ResourceRepresentable{
+    
+    func index(_ request: Request) throws -> ResponseRepresentable {
+        
+        let shotQuery = try Shot.query()
+        shotQuery.limit = Limit(count: 8, offset: 0)
+        return try shotQuery.union(User.self).filter(User.self, "consented", true).all().makeJSON()
+        
+    }
+    
+    func makeResource() -> Resource<Shot> {
+        return Resource(
+            index: index
+        )
+    }
+    
+}
 
 final class ShotController: ResourceRepresentable {
     
@@ -16,7 +35,7 @@ final class ShotController: ResourceRepresentable {
         
         let user = try request.user()
         
-        return try category.shots().union(User.self).filter(User.self, "consented", false).all().makeJSON(user: user)
+        return try category.shots().union(User.self).filter(User.self, "consented", true).all().makeJSON(user: user)
         
     }
 

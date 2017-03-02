@@ -30,9 +30,14 @@ admin.addRoutes(to: drop)
 let adminCreators = AdminCreatorsController()
 adminCreators.addRoutes(to: drop)
 
-drop.group(ProtectMiddleware()) { secure in
-    secure.resource("api/shots", ShotController())
-    secure.resource("api/likes", LikeController())
+// API
+
+drop.group("api") { api in
+    api.resource("public-shots", PublicShotController())
+    api.group(ProtectMiddleware()) { secure in
+        secure.resource("shots", ShotController())
+        secure.resource("likes", LikeController())
+    }
 }
 
 drop.run()
