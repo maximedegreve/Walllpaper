@@ -48,7 +48,6 @@ let adminCreators = AdminCreatorsController()
 adminCreators.addRoutes(to: drop)
 
 // API
-
 drop.group("api") { api in
     
     api.resource("public-shots", PublicShotController())
