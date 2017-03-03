@@ -45,7 +45,13 @@ final class Dribbble {
         return "https://dribbble.com/oauth/authorize?redirect_uri=\(redirect_url)&client_id=\(self.client_id)&scope=write public"
     }
     
-    static func user(token: String) throws -> Response{
+    static func user(token: String, id: Int) throws -> Response{
+        
+        return try drop.client.get("\(self.apiURL)users/\(id)?access_token=\(token)");
+        
+    }
+    
+    static func myUser(token: String) throws -> Response{
         
         return try drop.client.get("\(self.apiURL)user?access_token=\(token)");
         

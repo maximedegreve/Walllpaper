@@ -17,7 +17,7 @@ final class LoginController {
         drop.get("admin/login", handler: loginAdmin)
         drop.get("api/login", handler: login)
     }
-    
+
     func login(_ request: Request) throws -> ResponseRepresentable {
         
         guard let code = request.data["code"]?.string else {
