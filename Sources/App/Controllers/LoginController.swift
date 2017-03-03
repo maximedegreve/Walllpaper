@@ -35,9 +35,11 @@ final class LoginController {
             return Response(redirect: "/admin")
         }
         
-        let user = try User.authenticate(credentials: token)
-
-        return user as! ResponseRepresentable
+        guard let user = try User.authenticate(credentials: token) as? User else {
+            throw Abort.badRequest
+        }
+        
+        return Response(redirect: "/api/me/access-token=\(user.accessToken)")
         
     }
     

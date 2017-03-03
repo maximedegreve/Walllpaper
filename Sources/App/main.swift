@@ -54,6 +54,8 @@ drop.group("api") { api in
     
     api.group(ProtectMiddleware()) { secure in
         
+        let userController = UserController()
+        secure.get("me", handler: userController.me)
         secure.resource("shots", ShotController())
         secure.resource("likes", LikeController())
         secure.group("dribbble") { dribbble in
