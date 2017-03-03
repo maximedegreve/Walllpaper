@@ -21,7 +21,7 @@ final class User: Model {
     var name: String
     var dribbbleUrl: String
     var dribbbleAccessToken: String?
-    var avatarUrl: String?
+    var dribbbleAvatarUrl: String?
     var location: String?
     var website: String?
     var twitter: String?
@@ -42,7 +42,7 @@ final class User: Model {
         self.name = name
         self.dribbbleUsername = dribbbleUsername
         self.dribbbleUrl = dribbbleUrl
-        self.avatarUrl = avatarUrl
+        self.dribbbleAvatarUrl = avatarUrl
         self.location = location
         self.website = website
         self.twitter = twitter
@@ -61,7 +61,7 @@ final class User: Model {
         self.dribbbleUsername = try node.extract("dribbble_username")
         self.dribbbleUrl = try node.extract("dribbble_url")
         self.dribbbleAccessToken = try node.extract("dribbble_access_token")
-        self.avatarUrl = try node.extract("avatar_url")
+        self.dribbbleAvatarUrl = try node.extract("dribbble_avatar_url")
         self.location = try node.extract("location")
         self.website = try node.extract("website")
         self.twitter = try node.extract("twitter")
@@ -84,7 +84,7 @@ final class User: Model {
         dict["dribbble_username"] = dribbbleUsername.makeNode()
         dict["dribbble_url"] = dribbbleUrl.makeNode()
         dict["dribbble_access_token"] = dribbbleAccessToken?.makeNode()
-        dict["avatar_url"] = avatarUrl?.makeNode()
+        dict["dribbble_avatar_url"] = dribbbleAvatarUrl?.makeNode()
         dict["location"] = location?.makeNode()
         dict["website"] = website?.makeNode()
         dict["twitter"] = twitter?.makeNode()
@@ -106,6 +106,7 @@ final class User: Model {
             "dribbble_id": self.dribbbleId,
             "dribbble_username": self.dribbbleUsername,
             "dribbble_url": self.dribbbleUrl,
+            "dribbble_avatar_url": self.dribbbleAvatarUrl,
             "location": self.location,
             "website": self.website,
             "twitter": self.twitter,
@@ -124,6 +125,7 @@ final class User: Model {
             user.int("dribbble_id", optional: false, unique: true, default: 0)
             user.string("dribbble_username", length: 250, optional: false, unique: true)
             user.string("dribbble_url", length: 250, optional: false, unique:true)
+            user.string("dribbble_avatar_url", length: 250, optional: true, unique:true)
             user.string("dribbble_access_token", length: 250, optional: true, unique:true)
             user.string("avatar_url", length: 250, optional: true, unique: false)
             user.string("location", length: 250, optional: true, unique: false)
