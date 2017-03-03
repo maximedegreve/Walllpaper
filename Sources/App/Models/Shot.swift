@@ -73,6 +73,7 @@ final class Shot: Model {
     func makeJSON() throws -> JSON {
         
         return try JSON(node: [
+            "id": self.id,
             "title": self.title,
             "description": self.description,
             "image_retina": self.imageRetina,
