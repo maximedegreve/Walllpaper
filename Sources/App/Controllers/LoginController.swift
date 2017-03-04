@@ -15,10 +15,11 @@ final class LoginController {
     
     func addRoutes(to drop: Droplet) {
         drop.get("admin/login", handler: loginAdmin)
-        drop.get("api/login", handler: login)
+        drop.get("api/login-callback", handler: callback)
+        drop.get("api/login-mobile", handler: loginMobile)
     }
 
-    func login(_ request: Request) throws -> ResponseRepresentable {
+    func callback(_ request: Request) throws -> ResponseRepresentable {
         
         guard let code = request.data["code"]?.string else {
                 throw Abort.badRequest
@@ -39,12 +40,16 @@ final class LoginController {
             throw Abort.badRequest
         }
         
-        return Response(redirect: "/api/me/access-token=\(user.accessToken)")
+        return Response(redirect: "/api/me?token=\(user.accessToken)")
         
     }
     
     func loginAdmin(_ request: Request) throws -> ResponseRepresentable {
         try request.session().data["isAdmin"] = true
+        return Response(redirect: Dribbble.loginLink())
+    }
+    
+    func loginMobile(_ request: Request) throws -> ResponseRepresentable {
         return Response(redirect: Dribbble.loginLink())
     }
     
