@@ -16,7 +16,9 @@ final class UserController {
     func me(request: Request) throws -> ResponseRepresentable {
         let user = try request.user()
         let userJSON = try user.makeJSON()
-        return Response(body: userJSON)
+        let response = Response()
+        response.json = userJSON
+        return response
     }
         
 }
