@@ -51,7 +51,7 @@ final class ShotController: ResourceRepresentable {
         
         let user = try request.user()
 
-        return try Shot.query().all().makeJSON(user: user)
+        return try Shot.query().union(User.self).filter(User.self, "consented", true).all().makeJSON(user: user)
         
     }
     
