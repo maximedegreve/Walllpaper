@@ -33,7 +33,7 @@ final class ShotController: ResourceRepresentable {
             return try liked(request: request)
         }
         
-        if categoryString == "all"{
+        if categoryString == "latest"{
             return try all(request: request)
         }
         
