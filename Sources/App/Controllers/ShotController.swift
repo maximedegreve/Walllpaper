@@ -33,6 +33,10 @@ final class ShotController: ResourceRepresentable {
             return try liked(request: request)
         }
         
+        if categoryString == "all"{
+            return try all(request: request)
+        }
+        
         guard let category = try Category.query().filter("name", categoryString).first() else {
             throw Abort.custom(status: .badRequest, message: "Category not found")
         }
@@ -40,6 +44,14 @@ final class ShotController: ResourceRepresentable {
         let user = try request.user()
         
         return try category.shots().union(User.self).filter(User.self, "consented", true).all().makeJSON(user: user)
+        
+    }
+    
+    func all(request: Request) throws -> ResponseRepresentable {
+        
+        let user = try request.user()
+
+        return try Shot.query().all().makeJSON(user: user)
         
     }
     
