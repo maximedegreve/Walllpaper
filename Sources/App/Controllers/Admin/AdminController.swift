@@ -30,7 +30,6 @@ final class AdminController {
     func getShots() throws -> [Shot]{
         
         let shotsQuery = try Shot.query()
-        shotsQuery.limit = Limit(count: 42, offset: 0)
         let shots = try shotsQuery.sort("created_at", .descending).all()
         return shots
         
