@@ -28,7 +28,11 @@ final class ShotController: ResourceRepresentable {
         guard let categoryString = request.data["category"]?.string else {
             throw Abort.custom(status: .badRequest, message: "No category was defined")
         }
-
+        
+        if categoryString == "liked"{
+            return try liked(request: request)
+        }
+        
         guard let category = try Category.query().filter("name", categoryString).first() else {
             throw Abort.custom(status: .badRequest, message: "Category not found")
         }
@@ -38,7 +42,19 @@ final class ShotController: ResourceRepresentable {
         return try category.shots().union(User.self).filter(User.self, "consented", true).all().makeJSON(user: user)
         
     }
-
+    
+    func liked(request: Request) throws -> ResponseRepresentable {
+        
+        let user = try request.user()
+        
+        guard let userId = user.id else {
+            throw Abort.custom(status: .badRequest, message: "Could not get user id")
+        }
+        
+        return try Like.query().filter("user_id", userId).all().makeJSON(request: request)
+        
+    }
+    
     func makeResource() -> Resource<Shot> {
         return Resource(
             index: index
