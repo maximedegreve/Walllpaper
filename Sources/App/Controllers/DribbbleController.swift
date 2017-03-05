@@ -22,7 +22,7 @@ final class DribbbleController {
         
         if user.dribbbleId == maximeDribbbleId || user.dribbbleId == filippoDribbbleId{
             // Since those can't follow themselves
-            return try Response(status: .found, json: JSON(["message": "You are one of the creators..."]))
+            return try Response(status: .ok, json: JSON(["message": "You are one of the creators..."]))
         }
         
         guard let dribbbleToken = user.dribbbleAccessToken else {
@@ -33,9 +33,9 @@ final class DribbbleController {
         let followsMaxime = try Dribbble.isFollowingUser(token: dribbbleToken, id: maximeDribbbleId)
         
         if followsFilippo && followsMaxime{
-            return try Response(status: .found, json: JSON(["message": "You are following all of them"]))
+            return try Response(status: .ok, json: JSON(["message": "You are following all of them"]))
         } else {
-            return try Response(status: .notFound, json: JSON(["message": "You are not following all of them."]))
+            return try Response(status: .noContent, json: JSON(["message": "You are not following all of them."]))
         }
         
     }
@@ -54,7 +54,7 @@ final class DribbbleController {
         }
         
         return try Response(status: .created, json: JSON(["message": "Follows are made... This doesn't guarantee they worked."]))
-                
+        
     }
 
 }
