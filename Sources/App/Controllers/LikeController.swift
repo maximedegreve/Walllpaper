@@ -11,7 +11,8 @@ import HTTP
 
 final class LikeController: ResourceRepresentable {
     
-    func delete(request: Request, like: Like) throws -> ResponseRepresentable {
+    func clear(request: Request) throws -> ResponseRepresentable {
+        let like = try request.like()
         try like.delete()
         return JSON([:])
     }
@@ -25,7 +26,7 @@ final class LikeController: ResourceRepresentable {
     func makeResource() -> Resource<Like> {
         return Resource(
             store: create,
-            destroy: delete
+            clear: clear
         )
     }
     
