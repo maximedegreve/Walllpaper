@@ -14,12 +14,32 @@ final class LikeController: ResourceRepresentable {
     func clear(request: Request) throws -> ResponseRepresentable {
         let like = try request.like()
         try like.delete()
+        
+        guard let userAccessToken = try like.user().get()?.dribbbleAccessToken,
+            let shotDribbbleId = try like.shot().get()?.dribbbleId else {
+            throw Abort.custom(status: .badRequest, message: "Something went wrong")
+        }
+        
+        try background {
+            _ = try? Dribbble.unlikeShot(token: userAccessToken, id: shotDribbbleId)
+        }
+        
         return JSON([:])
     }
     
     func create(request: Request) throws -> ResponseRepresentable {
         var like = try request.like()
         try like.save()
+        
+        guard let userAccessToken = try like.user().get()?.dribbbleAccessToken,
+            let shotDribbbleId = try like.shot().get()?.dribbbleId else {
+                throw Abort.custom(status: .badRequest, message: "Something went wrong")
+        }
+        
+        try background {
+            _ = try? Dribbble.likeShot(token: userAccessToken, id: shotDribbbleId)
+        }
+        
         return like
     }
     
