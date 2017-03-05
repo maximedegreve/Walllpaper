@@ -33,13 +33,9 @@ final class DribbbleController {
         let followsMaxime = try Dribbble.isFollowingUser(token: dribbbleToken, id: maximeDribbbleId)
         
         if followsFilippo && followsMaxime{
-            let response = Response(status: .found, body: "You are following all of them.")
-            response.headers["Content-Type"] = "application/json"
-            return response
+            return try Response(status: .found, json: JSON(["message": "You are following all of them"]))
         } else {
-            let response = Response(status: .notFound, body: "You are not following all of them.")
-            response.headers["Content-Type"] = "application/json"
-            return response
+            return try Response(status: .notFound, json: JSON(["message": "You are not following all of them."]))
         }
         
     }
