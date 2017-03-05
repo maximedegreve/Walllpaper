@@ -43,8 +43,14 @@ extension Request {
             throw Abort.custom(status: .badRequest, message: "No shot-id was provided")
         }
         
-        let like = Like(user: userId.makeNode(), shot: try shotId.makeNode())
+        // Like already exists
         
-        return like
+        if let like = try Like.query().filter("shot_id", shotId).filter("user_id", userId).first(){
+            return like
+        }
+        
+        // Like doesn't exist
+        return  Like(user: userId.makeNode(), shot: try shotId.makeNode())
+        
     }
 }
