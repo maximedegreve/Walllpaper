@@ -1,11 +1,11 @@
-# Walllpaper 👨🏻‍🎨🏻
+# Walllpaper 👨🏻‍🎨
 The server side code of [Walllpaper App](https://itunes.apple.com/us/app/keynote/id1050415023?mt=8), written in Swift.
 
 <img src="/Public/images/github-header.png?raw=true" width="888">
 
 Walllpaper turns [Dribbble](https://dribbble.com) shots into wallpapers by extending the color on the edges.
 
-In the future I might also open source the iOS app code.
+In the future I might open source the iOS app code too...
 
 ## 🤖 Before building (dependencies)
 
@@ -17,8 +17,8 @@ In the future I might also open source the iOS app code.
 * Run ```vapor xcode```, this will create the Xcode project
 
 ### Ubuntu (server):
-* Run ```sudo apt-get install libgd-dev```
-* Run ```apt-get install libmysqlclient-dev```
+* Run ```sudo apt-get install libcurl3```
+* Run ```apt-get install mysql-server libmysqlclient-dev python-mysqldb``` followed by ```mysql_secure_installation``` to setup a database
 
 ### Database:
 * Create a MySQL database called ```walllpaper```, e.g. using the mysql CLI: ```CREATE DATABASE walllpaper;```
