@@ -1,6 +1,34 @@
-# Basic Template
+# Walllpaper 👨🏻‍🎨🏻
+The server side code of [Walllpaper App](https://itunes.apple.com/us/app/keynote/id1050415023?mt=8), written in Swift.
 
-A basic vapor template for starting a new Vapor web application. If you're using vapor toolbox, you can use: `vapor new --template=basic`
+<img src="/Public/images/github-header.png?raw=true" width="888">
+
+Walllpaper turns [Dribbble](https://dribbble.com) shots into wallpapers by extending the color on the edges.
+
+In the future I might also open source the iOS app code.
+
+## 🤖 Before building (dependencies)
+
+* Install [Vapor Toolbox](https://github.com/vapor/toolbox)
+
+### macOS:
+* Run ```brew install mysql``` followed by ```mysql_secure_installation``` to setup a database
+* Install [Xcode](https://developer.apple.com/xcode/)
+* Run ```vapor xcode```, this will create the Xcode project
+
+### Ubuntu (server):
+* Run ```sudo apt-get install libgd-dev```
+* Run ```apt-get install libmysqlclient-dev```
+
+### Database:
+* Create a MySQL database called ```walllpaper```, e.g. using the mysql CLI: ```CREATE DATABASE walllpaper;```
+* [Config/mysql.json](Config/mysql.json) contains the database credentials
+
+## 🚧 Building
+
+### macOS:
+* Run the ```App``` target in Xcode
+* Walllpaper should now be running on [http://localhost:8080](http://localhost:8080)
 
 ## 📖 Documentation
 
@@ -8,7 +36,7 @@ Visit the Vapor web framework's [documentation](http://docs.vapor.codes) for ins
 
 ## 💧 Community
 
-Join the welcoming community of fellow Vapor developers in [slack](http://vapor.team).
+Join the welcoming community of fellow Vapor developers in [Slack](http://vapor.team).
 
 ## 🔧 Compatibility
 
