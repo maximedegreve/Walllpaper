@@ -5,6 +5,7 @@ import Sessions
 import Fluent
 import FluentMySQL
 import Routing
+import Jobs
 
 let drop = Droplet()
 
@@ -67,6 +68,12 @@ drop.group("api") { api in
         }
         
     }
+}
+
+// Tasks
+
+Jobs.add(interval: .days(1)) {
+    IntercomTasks.schedule()
 }
 
 drop.run()
