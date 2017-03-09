@@ -24,32 +24,25 @@ final class IntercomTasks {
     
     static func updateUsers() throws -> Void{
         
-        //  Rate Limiting: 82 request per minute
+        //  Rate Limiting: 82 request per 10 seconds (100 per minute)
+        
         let limitAmount = 82
+        let usersPerRequest = 100
         let usersCount = try User.query().all().count
-        let amountIterations = ceil(Double(usersCount)/Double(limitAmount))
+        let amountIterations = ceil(Double(usersCount)/Double(usersPerRequest))
                     
         for iterate in 0...Int(amountIterations) {
             
-            let offset = iterate * limitAmount
-            let limit = Limit(count: limitAmount, offset: offset)
+            let offset = iterate * usersPerRequest
+            let limit = Limit(count: usersPerRequest, offset: offset)
             let userQuery = try User.query()
             userQuery.limit = limit
             let users = try userQuery.all()
-            try? updateUsersGroup(users: users)
-            sleep(1)
+            _ = try? Intercom.bulkUsersUpdate(users: users)
             
-        }
-        
-    }
-    
-    static func updateUsersGroup(users: [User]) throws -> Void{
-        
-        for user in users{
-            if let userId = user.id?.string{
-                let result = try Intercom.saveUser(userId: userId, name: user.name, avatarUrl: user.dribbbleAvatarUrl)
-                Swift.print(result.description)
-            }
+            let secondsSleep = UInt32(floor(Double(limitAmount/10)))
+            sleep(secondsSleep)
+            
         }
         
     }
