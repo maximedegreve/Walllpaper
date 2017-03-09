@@ -72,7 +72,8 @@ drop.group("api") { api in
 
 // Tasks
 
-Jobs.add(interval: .days(1)) {
+// Every 6 hours
+Jobs.add(interval: .seconds(21600)) {
     IntercomTasks.schedule()
 }
 

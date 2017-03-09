@@ -27,9 +27,9 @@ final class IntercomTasks {
         //  Rate Limiting: 82 request per minute
         let limitAmount = 82
         let usersCount = try User.query().all().count
-        let amountIterations = (Double(usersCount)/Double(limitAmount)).roundUp()
+        let amountIterations = ceil(Double(usersCount)/Double(limitAmount))
                     
-        for iterate in 0...amountIterations {
+        for iterate in 0...Int(amountIterations) {
             
             let offset = iterate * limitAmount
             let limit = Limit(count: limitAmount, offset: offset)
