@@ -11,10 +11,14 @@
             <h1>Shots</h1>
         </div>
         <div class="col-md-6 text-right">
+
             <div class="btn-group btn-group-s pull-right" role="group">
-            <a class="btn btn-default" href="#(previous-page)" role="button">Previous page</a>
+            #if(previous-page) {
+                <a class="btn btn-default" href="#(previous-page)" role="button">Previous page</a>
+            }
             <a class="btn btn-default" href="#(next-page)" role="button">Next page</a>
             </div>
+
             <form class="form-inline pull-right" action="/admin" method="POST">
             <div class="form-group">
             <label for="id">Dribbble Id</label>

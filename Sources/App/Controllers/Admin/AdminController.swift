@@ -44,10 +44,13 @@ final class AdminController {
             page = givenPage
         }
         
+        let nextPage = "/admin?page=\(page + 1)".makeNode()
+        let previousPage = (page - 1) < 0 ? nil : "/admin?page=\(page - 1)".makeNode()
+        
         return try drop.view.make("admin", [
                 "shots": try getShots(page: page).makeAdminNode(),
-                "next-page": "/admin?page=\(page + 1)",
-                "previous-page": "/admin?page=\(page - 1)"
+                "next-page": nextPage,
+                "previous-page": previousPage
                 ])
         
     }
