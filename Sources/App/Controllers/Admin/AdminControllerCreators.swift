@@ -21,7 +21,9 @@ final class AdminCreatorsController {
     
     func creators(_ request: Request) throws -> ResponseRepresentable {
         
-        let users = try User.withShots().makeNode()
+        let users = try User.withShots().sorted(by: { (user, otherUser) -> Bool in
+            return user.followersCount > otherUser.followersCount
+        }) .makeNode()
         
         return try drop.view.make("admin-creator", [
             "users": users,
