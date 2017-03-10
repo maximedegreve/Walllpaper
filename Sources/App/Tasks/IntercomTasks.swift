@@ -25,8 +25,10 @@ final class IntercomTasks {
     static func updateUsers() throws -> Void{
         
         //  Rate Limiting: 82 request per 10 seconds (100 per minute)
+        //  Also for each user update -0.1 we lose on request
+        //  So limit goes down 10 for 100 users
         
-        let limitAmount = 82
+        let limitAmount = 82 - 10
         let usersPerRequest = 100
         let usersCount = try User.query().all().count
         let amountIterations = ceil(Double(usersCount)/Double(usersPerRequest))
