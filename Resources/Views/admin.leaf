@@ -7,19 +7,33 @@
 #export("body") {
 
     <div class="row">
-        <form class="form-inline" action="/admin" method="POST">
+        <div class="col-md-6">
+            <h1>Shots</h1>
+        </div>
+        <div class="col-md-6 text-right">
+            <div class="btn-group btn-group-s pull-right" role="group">
+            <a class="btn btn-default" href="#(previous-page)" role="button">Previous page</a>
+            <a class="btn btn-default" href="#(next-page)" role="button">Next page</a>
+            </div>
+            <form class="form-inline pull-right" action="/admin" method="POST">
             <div class="form-group">
-                <label for="id">Dribbble Id</label>
-                <input type="text" name="shot-id"><br>
+            <label for="id">Dribbble Id</label>
+            <input type="text" name="shot-id"><br>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+            </form>
+        </div>
     </div>
-
+    <div class="row">
     #loop(shots, "shot") {
 
         <div data-idShot=#(shot.id) class="col-md-2" style="height: auto; margin-bottom: 40px;">
-            <img style='display: block;' height='auto' width='100%' src="#(shot.image)"/>
+            <div>
+                <img style='display: block;' height='auto' width='100%' src="#(shot.image)"/>
+                #if(shot.not-consented) {
+<span class='badge' style="position: absolute; top: 10px; margin-left: 10px;">Not consented</span>
+                }
+            </div>
             <h5>#(shot.title)</h5>
 
             #loop(shot.categories, "category") {
@@ -40,5 +54,6 @@
         </div>
 
     }
+    </div>
 
 }

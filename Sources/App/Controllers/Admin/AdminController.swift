@@ -27,18 +27,27 @@ final class AdminController {
 
     }
     
-    func getShots() throws -> [Shot]{
+    func getShots(page: Int) throws -> [Shot]{
         
         let shotsQuery = try Shot.query()
+        let amountPerPage = 20
+        shotsQuery.limit = Limit(count: amountPerPage, offset: amountPerPage*page)
         let shots = try shotsQuery.sort("created_at", .descending).all()
         return shots
         
     }
     
     func index(_ request: Request) throws -> ResponseRepresentable {
-
+        
+        var page = 0
+        if let givenPage = request.data["page"]?.int {
+            page = givenPage
+        }
+        
         return try drop.view.make("admin", [
-                "shots": try getShots().makeAdminNode(),
+                "shots": try getShots(page: page).makeAdminNode(),
+                "next-page": "/admin?page=\(page + 1)",
+                "previous-page": "/admin?page=\(page - 1)"
                 ])
         
     }
@@ -142,6 +151,8 @@ private extension Shot {
         
         let categories = try self.categories().all()
         let possibleCategories = try Category.query().all()
+        let userConsented = try self.user().get()?.consented
+        let userNotConsented = userConsented == false
         
         var categoriesList = [Node]()
         for category in possibleCategories{
@@ -163,6 +174,7 @@ private extension Shot {
             "id": self.id,
             "title": self.title,
             "image": self.image,
+            "not-consented": userNotConsented,
             "categories": try categoriesList.makeNode(),
             ])
 
