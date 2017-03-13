@@ -137,6 +137,7 @@ final class User: Model {
             user.int("followers_count", optional: false, unique: false, default: 0)
             user.int("following_count", optional: false, unique: false, default: 0)
             user.int("consented", optional: false, unique: false, default: 0)
+            user.int("contacted", optional: false, unique: false, default: 0)
             user.date("created_at")
             user.int("admin", optional: false, unique: false, default: 0)
         }
