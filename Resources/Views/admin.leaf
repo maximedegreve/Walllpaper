@@ -34,16 +34,15 @@
         <div data-idShot=#(shot.id) class="col-md-2" style="height: auto; margin-bottom: 40px;">
             <div>
                 <img style='display: block;' height='auto' width='100%' src="#(shot.image)"/>
-                #if(shot.not-consented) {
-<span class='badge' style="position: absolute; top: 10px; margin-left: 10px;">Not consented</span>
-                }
+                #equal(shot.consented, "2") { <span class='badge' style="position: absolute; top: 10px; margin-left: 10px;">Rejected</span> }
+                #equal(shot.consented, "0") { <span class='badge' style="position: absolute; top: 10px; margin-left: 10px;">Not consented</span> }
             </div>
             <h5>#(shot.title)</h5>
 
             #loop(shot.categories, "category") {
 
                 <label class="checkbox-inline">
-                <input #if(category.included) { checked='checked' } type="checkbox" name="check_list[]" value="#(category.id)">#(category.name)
+                <input class="category-checkbox" #if(category.included) { checked='checked' } type="checkbox" name="check_list[]" value="#(category.id)">#(category.name)
                 </label><br>
             }
 

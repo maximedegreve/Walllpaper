@@ -155,7 +155,6 @@ private extension Shot {
         let categories = try self.categories().all()
         let possibleCategories = try Category.query().all()
         let userConsented = try self.user().get()?.consented
-        let userNotConsented = userConsented == false
         
         var categoriesList = [Node]()
         for category in possibleCategories{
@@ -177,7 +176,7 @@ private extension Shot {
             "id": self.id,
             "title": self.title,
             "image": self.image,
-            "not-consented": userNotConsented,
+            "consented": userConsented,
             "categories": try categoriesList.makeNode(),
             ])
 

@@ -9,7 +9,7 @@ final class PublicShotController: ResourceRepresentable{
         
         let shotQuery = try Shot.query()
         shotQuery.limit = Limit(count: 8, offset: 0)
-        return try shotQuery.union(User.self).filter(User.self, "consented", true).all().makeJSON()
+        return try shotQuery.union(User.self).filter(User.self, "consented", 1).all().makeJSON()
         
     }
     
@@ -28,7 +28,7 @@ final class ShotController: ResourceRepresentable {
         guard let categoryString = request.data["category"]?.string else {
             throw Abort.custom(status: .badRequest, message: "No category was defined")
         }
-        
+         
         if categoryString == "liked"{
             return try liked(request: request)
         }
@@ -43,7 +43,7 @@ final class ShotController: ResourceRepresentable {
         
         let user = try request.user()
         
-        return try category.shots().union(User.self).filter(User.self, "consented", true).all().makeJSON(user: user)
+        return try category.shots().union(User.self).filter(User.self, "consented", 1).all().makeJSON(user: user)
         
     }
     
@@ -51,7 +51,7 @@ final class ShotController: ResourceRepresentable {
         
         let user = try request.user()
 
-        return try Shot.query().union(User.self).filter(User.self, "consented", true).all().makeJSON(user: user)
+        return try Shot.query().union(User.self).filter(User.self, "consented", 1).all().makeJSON(user: user)
         
     }
     

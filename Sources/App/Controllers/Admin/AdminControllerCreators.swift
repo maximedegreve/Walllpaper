@@ -15,6 +15,9 @@ final class AdminCreatorsController {
         
         drop.group(AdminProtectMiddleware()) { secure in
             secure.get("admin","creators", handler: creators)
+            secure.post("admin","contacted", handler: contactedPost)
+            secure.delete("admin","contacted", handler: contactedDelete)
+            secure.post("admin","status", handler: statusPost)
         }
         
     }
@@ -29,6 +32,49 @@ final class AdminCreatorsController {
             "users": users,
             ])
         
+    }
+    
+    func contactedPost(_ request: Request) throws -> ResponseRepresentable {
+        
+        guard let userID = request.data["id"]?.int else {
+            throw Abort.badRequest
+        }
+        
+        var user = try User.find(userID)
+        user?.contacted = true
+        try user?.save()
+
+        return Response(status: .created, body: "Set to contacted...")
+    }
+    
+    func contactedDelete(_ request: Request) throws -> ResponseRepresentable {
+        
+        guard let userID = request.data["id"]?.int else {
+            throw Abort.badRequest
+        }
+        
+        var user = try User.find(userID)
+        user?.contacted = false
+        try user?.save()
+        
+        return Response(status: .created, body: "Set to not contacted...")
+    }
+    
+    func statusPost(_ request: Request) throws -> ResponseRepresentable {
+        
+        guard let userID = request.data["user_id"]?.int else {
+            throw Abort.badRequest
+        }
+        
+        guard let status = request.data["status"]?.int else {
+            throw Abort.badRequest
+        }
+        
+        var user = try User.find(userID)
+        user?.consented = status
+        try user?.save()
+        
+        return Response(status: .created, body: "Status set...")
     }
     
 }

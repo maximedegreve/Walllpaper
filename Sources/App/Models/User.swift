@@ -27,7 +27,8 @@ final class User: Model {
     var twitter: String?
     var followersCount: Int
     var followingCount: Int
-    var consented: Bool = false
+    var contacted: Bool = false
+    var consented: Int = 0
     var createdAt: String
     var admin: Bool = false
     var exists: Bool = false
@@ -37,7 +38,7 @@ final class User: Model {
         case unsupportedCredentials
     }
     
-    init(name: String, dribbbleId: Int, dribbbleUsername: String, dribbbleUrl: String, avatarUrl: String?, location: String?, website: String?, twitter: String?, followersCount: Int, followingCount: Int, consented: Bool) {
+    init(name: String, dribbbleId: Int, dribbbleUsername: String, dribbbleUrl: String, avatarUrl: String?, location: String?, website: String?, twitter: String?, followersCount: Int, followingCount: Int, consented: Int) {
         self.dribbbleId = dribbbleId
         self.name = name
         self.dribbbleUsername = dribbbleUsername
@@ -54,7 +55,7 @@ final class User: Model {
     }
     
     init(node: Node, in context: Context) throws {
-        self.id = nil
+        self.id = try node.extract("id")
         self.name = try node.extract("name")
         self.accessToken = try node.extract("access_token")
         self.dribbbleId = try node.extract("dribbble_id")
@@ -68,6 +69,7 @@ final class User: Model {
         self.followersCount = try node.extract("followers_count")
         self.followingCount = try node.extract("following_count")
         self.consented = try node.extract("consented")
+        self.contacted = try node.extract("contacted")
         self.createdAt = try node.extract("created_at")
         self.admin = try node.extract("admin")
     }
@@ -90,7 +92,8 @@ final class User: Model {
         dict["twitter"] = twitter?.makeNode()
         dict["followers_count"] = try followersCount.makeNode()
         dict["following_count"] = try followingCount.makeNode()
-        dict["consented"] = consented.makeNode()
+        dict["consented"] = try consented.makeNode()
+        dict["contacted"] = contacted.makeNode()
         dict["created_at"] = createdAt.makeNode()
         dict["admin"] = admin.makeNode()
         
@@ -164,14 +167,13 @@ final class User: Model {
         let website = data["links"]?.object?["web"]?.string
         let twitter = data["links"]?.object?["twitter"]?.string
         
-        let newUser = User(name: name, dribbbleId: dribbId, dribbbleUsername: dribbUsername, dribbbleUrl: dribbUrl, avatarUrl: avatarUrl, location: location, website: website, twitter: twitter, followersCount: followersCount, followingCount: followingCount, consented: false)
+        let newUser = User(name: name, dribbbleId: dribbId, dribbbleUsername: dribbUsername, dribbbleUrl: dribbUrl, avatarUrl: avatarUrl, location: location, website: website, twitter: twitter, followersCount: followersCount, followingCount: followingCount, consented: 0)
         
         return newUser
         
     }
     
     static func withShots() throws -> [User]{
-        
         
         if let mysql = drop.database?.driver as? MySQLDriver {
             

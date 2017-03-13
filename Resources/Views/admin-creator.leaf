@@ -19,16 +19,26 @@
         <th>Website</th>
         <th>Twitter</th>
         <th>Followers</th>
+        <th>Contacted</th>
+        <th>Status</th>
         </tr></thead>
         <tbody>
 
         #loop(users, "user") {
 
-            <tr #if(user.consented) { style="background: rgb(183,203,168)" }>
+            <tr>
                 <td><a target='_blank' href='http://dribbble.com/#(user.dribbble_username)'>#(user.name)</a></td>
                 <td><a href="#(user.website)">#(user.website)</a></td>
                 <td>#(user.twitter)</td>
                 <td>#(user.followers_count)</td>
+                <td><input class="contacted-checkbox" #if(user.contacted) { checked='checked' } type="checkbox" name="check_list[]" value="#(user.id)"></td>
+                <td>
+                    <select #equal(user.consented, "1") { disabled } data-userid="#(user.id)" class="user-status" name="status">
+                    <option #equal(user.consented, "0") { selected='selected' } value="0">Not consented</option>
+                    <option #equal(user.consented, "1") { selected='selected' } disabled value="1">Consented</option>
+                    <option #equal(user.consented, "2") { selected='selected' } value="2">Rejected</option>
+                    </select>
+                </td>
             </tr>
 
         }
