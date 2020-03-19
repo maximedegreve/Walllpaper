@@ -1,5 +1,7 @@
 # Walllpaper 👨🏻‍🎨
 
+**Important Notice (14 Jan 2019):** Walllpaper is now shut down and pulled from the app store. [Read more](https://medium.com/@maximedegreve/80k-downloads-later-were-shutting-down-walllpaper-c15ba1f5400b)
+
 **Important Notice (18 Feb 2018):** [Dribbble retired most of their API endpoints](http://developer.dribbble.com/changes/) which made this server useless, therefore we've taken down our server. The marketing pages are now stored on Github and the walllpaper data is now served statically from the iOS device.
 
 The server side code of [Walllpaper App](https://itunes.apple.com/us/app/keynote/id1050415023?mt=8), written in Swift.
